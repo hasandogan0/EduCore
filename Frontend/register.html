@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - EduCore</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="logo">EduCore</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Anasayfa</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Hesap Oluştur</h2>
+            <p>Öğrenci veya Eğitmen olarak katılın</p>
+
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="fullname">Ad Soyad</label>
+                    <input type="text" id="fullname" name="fullname" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Kullanıcı Adı</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-posta</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">Kayıt Amacınız...</label>
+                    <select id="role" name="role" required onchange="toggleProfileImage()">
+                        <option value="Student">Öğrenmek (Öğrenci)</option>
+                        <option value="Instructor">Öğretmek (Eğitmen)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="profile-image-group" style="display:none">
+                    <label for="profileImage">Profil Resmi (İsteğe Bağlı)</label>
+                    <input type="file" id="profileImage" name="profileImage" accept="image/*">
+                </div>
+
+                <script>
+                    function toggleProfileImage() {
+                        const role = document.getElementById('role').value;
+                        const group = document.getElementById('profile-image-group');
+                        group.style.display = role === 'Instructor' ? 'block' : 'none';
+                    }
+                </script>
+
+                <div id="error-message" class="error-message"></div>
+                <button type="submit" class="cta-button" style="width:100%">Kayıt Ol</button>
+            </form>
+            <p style="margin-top:1rem;text-align:center;font-size:0.9rem">Zaten hesabınız var mı? <a href="login.html"
+                    style="color:var(--primary-color)">Giriş Yap</a></p>
+        </div>
+    </div>
+
+    <style>
+        .auth-container {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1), transparent 70%);
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .auth-card h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .auth-card p {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: inherit;
+        }
+
+        .form-group option {
+            background: #1a1b2e;
+            /* Fallback for select bg */
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            min-height: 1.25rem;
+        }
+    </style>
+
+    <script src="js/auth.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Dashboard - EduCore</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .courses-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        .course-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .course-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--glass-border);
+        }
+
+        .course-info h4 {
+            margin-bottom: 0.2rem;
+        }
+
+        .course-status {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .status-Published {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .status-Pending {
+            background: rgba(234, 179, 8, 0.2);
+            color: #facc15;
+        }
+
+        .status-Draft {
+            background: rgba(148, 163, 184, 0.2);
+            color: #cbd5e1;
+        }
+
+        .pending-alert {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">EduCore <span style="font-size:0.8rem; opacity:0.7">Eğitmen</span></div>
+        <nav>
+            <ul style="display:flex; align-items:center; gap:1.5rem">
+                <li id="user-profile-display" style="display:none; align-items:center; gap:0.8rem">
+                    <img id="user-avatar" src="" alt="Profile"
+                        style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid #3b82f6">
+                    <span id="user-fullname" style="font-size:0.9rem; color:#eee"></span>
+                </li>
+                <li><a href="index.html">Anasayfa</a></li>
+                <li><button onclick="logout()" class="view-btn" style="background:rgba(255,50,50,0.2)">Çıkış
+                        Yap</button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div id="approval-warning" class="pending-alert">
+            <strong>Hesap Onay Bekliyor</strong><br>
+            Hesabınız şu anda yönetici tarafından incelenmektedir. Onaylanana kadar yeni kurs oluşturamazsınız.
+        </div>
+
+        <div class="dashboard-header">
+            <h1>Genel Bakış</h1>
+            <button id="create-course-btn" class="cta-button" onclick="showCreateModal()">+ Yeni Kurs Ekle</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Toplam Gelir</h3>
+                <div class="value" id="total-earnings">0.00 TL</div>
+            </div>
+            <div class="stat-card">
+                <h3>Toplam Öğrenci</h3>
+                <div class="value" id="total-students">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Aktif Kurslar</h3>
+                <div class="value" id="active-courses-count">0</div>
+            </div>
+        </div>
+
+        <div class="courses-section">
+            <h2>Kurslarım</h2>
+            <div id="course-list" class="course-list">
+                <!-- Courses will appear here -->
+                <p style="color:var(--text-muted)">Kurslar yükleniyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Course Modal -->
+    <div id="modal"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:1000">
+        <div style="background:var(--card-bg); padding:2rem; border-radius:12px; width:100%; max-width:500px">
+            <h2 style="margin-bottom:1rem">Yeni Kurs Ekle</h2>
+            <form id="create-course-form">
+                <input type="text" id="c-title" placeholder="Kurs Başlığı" required
+                    style="width:100%; padding:0.8rem; margin-bottom:1rem; border-radius:8px; border:1px solid #333; background:#222; color:white">
+                <textarea id="c-desc" placeholder="Açıklama" required
+                    style="width:100%; padding:0.8rem; margin-bottom:1rem; border-radius:8px; border:1px solid #333; background:#222; color:white; min-height:100px"></textarea>
+                <div style="display:flex; gap:1rem">
+                    <input type="number" id="c-price" placeholder="Fiyat (TL)" required
+                        style="flex:1; padding:0.8rem; margin-bottom:1rem; border-radius:8px; border:1px solid #333; background:#222; color:white">
+                    <input type="number" id="c-quota" placeholder="Kontenjan" required
+                        style="flex:1; padding:0.8rem; margin-bottom:1rem; border-radius:8px; border:1px solid #333; background:#222; color:white">
+                </div>
+                <select id="c-category"
+                    style="width:100%; padding:0.8rem; margin-bottom:1rem; border-radius:8px; border:1px solid #333; background:#222; color:white">
+                    <option value="1">Development</option>
+                    <option value="2">Design</option>
+                    <option value="3">Business</option>
+                </select>
+
+                <div style="margin-bottom:1rem">
+                    Kurs Görseli</label>
+                    <input type="file" id="c-image-file" accept="image/*"
+                        style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #333; background:#222; color:white">
+                    <input type="hidden" id="c-image-url">
+                </div>
+
+                <div style="display:flex; gap:1rem; justify-content:flex-end">
+                    <button type="button" onclick="closeModal()"
+                        style="padding:0.8rem 1.5rem; border-radius:8px; border:none; background:#333; color:white; cursor:pointer">İptal</button>
+                    <button type="submit" class="cta-button">Oluştur</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lesson Management Modal -->
+    <div id="lesson-modal"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:1000">
+        <div
+            style="background:var(--card-bg); padding:2rem; border-radius:12px; width:100%; max-width:600px; max-height:80vh; overflow-y:auto">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem">
+                <h2 id="lesson-modal-title">Ders Yönetimi</h2>
+                <button onclick="closeLessonModal()"
+                    style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer">&times;</button>
+            </div>
+
+            <div style="margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--glass-border)">
+                <h3 id="lesson-form-title">Yeni Ders Ekle</h3>
+                <form id="add-lesson-form">
+                    <input type="hidden" id="l-course-id">
+                    <input type="text" id="l-title" placeholder="Ders Başlığı" required
+                        style="width:100%; padding:0.8rem; margin-bottom:1rem; border-radius:8px; border:1px solid #333; background:#222; color:white">
+
+                    <label style="display:block; margin-bottom:0.5rem; font-size:0.9rem; color:#aaa">Video
+                        Kaynağı</label>
+
+                    <!-- URL Input -->
+                    <input type="text" id="l-video-url" placeholder="Video URL (Youtube, Vimeo vb.) veya Dosya Yükle"
+                        style="width:100%; padding:0.8rem; margin-bottom:0.5rem; border-radius:8px; border:1px solid #333; background:#222; color:white">
+
+                    <!-- File Input -->
+                    <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:1rem">
+                        <input type="file" id="l-video-file" accept="video/mp4,video/x-matroska,video/webm"
+                            style="flex:1; padding:0.5rem; border-radius:8px; border:1px solid #333; background:#222; color:white">
+                    </div>
+
+                    <button type="submit" class="cta-button" style="width:100%">Ders Ekle</button>
+                    <div id="upload-progress"
+                        style="margin-top:0.5rem; font-size:0.8rem; color:var(--primary-color); display:none"></div>
+                </form>
+            </div>
+
+            <div>
+                <h3>Mevcut Dersler</h3>
+                <div id="lesson-list" style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem">
+                    <p>Yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5239/api';
+        let editingLessonId = null;
+
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+
+            if (!token || role !== 'Instructor') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Fetch User Info
+            try {
+                const res = await fetch(`${API_BASE_URL}/Auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const user = await res.json();
+                    document.getElementById('user-profile-display').style.display = 'flex';
+                    document.getElementById('user-fullname').innerText = user.fullName || user.username;
+
+                    if (user.headshotUrl) {
+                        // Ensure URL maps to localhost port if relative or absolute
+                        // If backend returns /uploads/..., we prefix
+                        // Assuming backend runs on same origin or we need base URL
+                        const fullUrl = user.headshotUrl.startsWith('http') ? user.headshotUrl : `http://localhost:5239${user.headshotUrl}`;
+                        document.getElementById('user-avatar').src = fullUrl;
+                    } else {
+                        document.getElementById('user-avatar').src = 'https://ui-avatars.com/api/?name=' + (user.fullName || user.username);
+                    }
+                }
+            } catch (e) {
+                console.error("User info fetch failed", e);
+            }
+        }
+
+        async function loadDashboard() {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/Courses/my-courses`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 403) {
+                    document.getElementById('approval-warning').style.display = 'block';
+                    document.getElementById('create-course-btn').disabled = true;
+                    document.getElementById('create-course-btn').style.opacity = '0.5';
+                    document.getElementById('create-course-btn').innerText = 'Devre Dışı (Onay Bekliyor)';
+                    return;
+                }
+
+
+                if (!response.ok) throw new Error('Kurslar yüklenemedi');
+
+                const courses = await response.json();
+                renderCourses(courses);
+
+                document.getElementById('active-courses-count').innerText = courses.length;
+
+                // Load Stats
+                try {
+                    const statsRes = await fetch(`${API_BASE_URL}/Courses/stats`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (statsRes.ok) {
+                        const stats = await statsRes.json();
+                        document.getElementById('total-earnings').innerText = `${stats.totalEarnings.toFixed(2)} TL`;
+                        document.getElementById('total-students').innerText = stats.totalStudents;
+                    }
+                } catch (e) {
+                    console.error("Stats error", e);
+                }
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('course-list').innerHTML = '<p style="color:red">Dashboard yükleme hatası.</p>';
+            }
+        }
+
+        function renderCourses(courses) {
+            const list = document.getElementById('course-list');
+            list.innerHTML = '';
+
+            if (courses.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted)">Henüz kurs oluşturulmadı.</p>';
+                return;
+            }
+
+            courses.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'course-item';
+                const statusColor = c.isActive ? '#22c55e' : '#ef4444';
+                const statusText = c.isActive ? 'Aktif' : 'Pasif'; // Using IsActive for display toggle
+                // Also showing Approval Status
+
+                item.innerHTML = `
+                    <div class="course-info">
+                        <h4>${c.title}</h4>
+                        <div style="font-size:0.85rem; color:var(--text-muted)">${c.categoryName} • ${c.price} TL</div>
+                        <div style="font-size:0.8rem; margin-top:0.3rem">
+                            <span class="course-status status-${c.status}">${c.status}</span>
+                            <span style="color:${statusColor}; margin-left:0.5rem; font-size:0.8rem">● ${statusText}</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:0.5rem; align-items:center">
+                        <button class="view-btn" style="font-size:0.8rem" onclick="openLessonModal(${c.id}, '${c.title}')">İçerik</button>
+                        <button class="view-btn" style="background:#3b82f6; font-size:0.8rem" onclick='openEditModal(${JSON.stringify(c)})'>Düzenle</button>
+                         <button class="view-btn" style="background:${c.isActive ? '#ef4444' : '#22c55e'}; font-size:0.8rem" onclick="toggleCourseStatus(${c.id})">${c.isActive ? 'Pasif' : 'Aktif'}</button>
+                        <button class="view-btn" style="background:#ef4444; font-size:0.8rem" onclick="deleteCourse(${c.id})">Sil</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        function showCreateModal() {
+            document.getElementById('modal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            editingCourseId = null;
+            document.getElementById('create-course-form').reset();
+            document.querySelector('#create-course-form button[type="submit"]').innerText = 'Oluştur';
+            document.querySelector('#modal h2').innerText = 'Yeni Kurs Ekle';
+        }
+
+        let editingCourseId = null;
+
+        function openEditModal(course) {
+            editingCourseId = course.id;
+            document.getElementById('c-title').value = course.title;
+            // Decode encoded entities if any, simplified here or assume direct value
+            document.getElementById('c-desc').value = course.description || '';
+            document.getElementById('c-price').value = course.price;
+            document.getElementById('c-quota').value = course.quota;
+            // Set category if possible (requires value match) - skipping complex category selection logic for now, assuming user re-selects or default
+
+            // Show existing image warning or preview?
+            // For now just empty file input. Backend keeps old image if new one is not provided.
+
+            document.getElementById('c-image-url').value = course.imageUrl || '';
+
+            document.querySelector('#create-course-form button[type="submit"]').innerText = 'Güncelle';
+            document.querySelector('#modal h2').innerText = 'Kursu Düzenle';
+
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        async function toggleCourseStatus(id) {
+            if (!confirm('Kursun durumunu değiştirmek istediğinize emin misiniz?')) return;
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_BASE_URL}/Courses/${id}/toggle`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    loadDashboard();
+                } else {
+                    alert('İşlem başarısız.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Hata oluştu.');
+            }
+        }
+
+        async function deleteCourse(id) {
+            const result = await Swal.fire({
+                title: 'Kursu Sil',
+                text: "Bu kursu ve bağlı tüm dersleri silmek istediğinize emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, Sil',
+                cancelButtonText: 'İptal',
+                background: '#1f2937',
+                color: '#fff'
+            });
+
+            if (!result.isConfirmed) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_BASE_URL}/Courses/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Silindi!',
+                        text: 'Kurs silindi.',
+                        icon: 'success',
+                        background: '#1f2937',
+                        color: '#fff',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    loadDashboard();
+                } else {
+                    Swal.fire({ title: 'Hata', text: 'Silme işlemi başarısız.', icon: 'error', background: '#1f2937', color: '#fff' });
+                }
+            } catch (e) {
+                console.error(e);
+                Swal.fire({ title: 'Hata', text: 'Hata oluştu.', icon: 'error', background: '#1f2937', color: '#fff' });
+            }
+        }
+
+        document.getElementById('create-course-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'İşleniyor...';
+
+            try {
+                // 1. Handle Image Upload
+                let imageUrl = document.getElementById('c-image-url').value; // Keep existing if edit
+                const fileInput = document.getElementById('c-image-file');
+
+                if (fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+
+                    const uploadRes = await fetch(`${API_BASE_URL}/Upload/image`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+
+                    if (!uploadRes.ok) throw new Error('Resim yükleme başarısız');
+                    const uploadData = await uploadRes.json();
+                    imageUrl = uploadData.url;
+                }
+
+                // 2. Create/Update Course
+                const data = {
+                    title: document.getElementById('c-title').value,
+                    description: document.getElementById('c-desc').value,
+                    price: parseFloat(document.getElementById('c-price').value),
+                    quota: parseInt(document.getElementById('c-quota').value),
+                    categoryId: parseInt(document.getElementById('c-category').value),
+                    imageUrl: imageUrl
+                };
+
+                let res;
+                if (editingCourseId) {
+                    res = await fetch(`${API_BASE_URL}/Courses/${editingCourseId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    res = await fetch(`${API_BASE_URL}/Courses`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                if (!res.ok) throw new Error(editingCourseId ? 'Kurs güncellenemedi' : 'Kurs oluşturulamadı');
+
+                if (!editingCourseId) alert('Kurs Oluşturuldu! Yönetici onayı bekleniyor.');
+                else alert('Kurs Güncellendi!');
+
+                closeModal();
+                loadDashboard();
+
+            } catch (err) {
+                alert('Hata: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            }
+        });
+
+
+        // --- LESSON MANAGEMENT ---
+
+        function openLessonModal(courseId, title) {
+            document.getElementById('lesson-modal').style.display = 'flex';
+            document.getElementById('lesson-modal-title').innerText = `${title} - İçerik`;
+            document.getElementById('l-course-id').value = courseId;
+            resetForm();
+            loadLessons(courseId);
+        }
+
+        function closeLessonModal() {
+            document.getElementById('lesson-modal').style.display = 'none';
+            resetForm();
+        }
+
+        function resetForm() {
+            editingLessonId = null;
+            document.getElementById('l-title').value = '';
+            document.getElementById('l-video-file').value = '';
+            document.getElementById('l-video-url').value = '';
+
+            const submitBtn = document.querySelector('#add-lesson-form button[type="submit"]');
+            if (submitBtn) submitBtn.innerText = 'Ders Ekle';
+
+            const header = document.getElementById('lesson-form-title');
+            if (header) header.innerText = 'Yeni Ders Ekle';
+        }
+
+        async function loadLessons(courseId) {
+            const list = document.getElementById('lesson-list');
+            list.innerHTML = '<p>Yükleniyor...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/Lesson/course/${courseId}`);
+                if (!response.ok) throw new Error('Dersler yüklenemedi');
+                const lessons = await response.json();
+
+                list.innerHTML = '';
+                if (lessons.length === 0) {
+                    list.innerHTML = '<p style="color:var(--text-muted)">Henüz ders eklenmemiş.</p>';
+                } else {
+                    lessons.forEach(l => {
+                        const div = document.createElement('div');
+                        div.style.padding = '0.8rem';
+                        div.style.background = 'rgba(255,255,255,0.05)';
+                        div.style.borderRadius = '6px';
+                        div.style.display = 'flex';
+                        div.style.justifyContent = 'space-between';
+                        div.style.alignItems = 'center';
+
+                        const safeTitle = l.title.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+                        div.innerHTML = `
+                            <div>
+                                <strong>${safeTitle}</strong>
+                            </div>
+                            <div style="display:flex; gap:0.5rem; align-items:center">
+                                <a href="${l.videoUrl}" target="_blank" style="color:var(--primary-color); font-size:0.9rem">Video</a>
+                                <button class="edit-btn" style="background:rgba(255,200,50,0.2); color:#facc15; border:none; padding:0.3rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.8rem">Düzenle</button>
+                                <button onclick="deleteLesson(${l.id})" style="background:rgba(255,50,50,0.2); color:#fca5a5; border:none; padding:0.3rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.8rem">Sil</button>
+                            </div>
+                        `;
+
+                        div.querySelector('.edit-btn').onclick = () => startEdit(l);
+                        list.appendChild(div);
+                    });
+                }
+            } catch (err) {
+                list.innerHTML = `<p style="color:red">${err.message}</p>`;
+            }
+        }
+
+        function startEdit(lesson) {
+            editingLessonId = lesson.id;
+            document.getElementById('l-title').value = lesson.title;
+            document.getElementById('l-video-url').value = lesson.videoUrl || '';
+
+            document.querySelector('#add-lesson-form button[type="submit"]').innerText = 'Ders Güncelle';
+            const header = document.getElementById('lesson-form-title');
+            if (header) header.innerText = 'Dersi Düzenle';
+
+            // Scroll to form (inside modal)
+            document.getElementById('add-lesson-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function deleteLesson(lessonId) {
+            if (!confirm('Bu dersi silmek istediğinize emin misiniz?')) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_BASE_URL}/Lesson/${lessonId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    const courseId = document.getElementById('l-course-id').value;
+                    loadLessons(courseId);
+                } else {
+                    alert('Silme işlemi başarısız.');
+                }
+            } catch (e) {
+                alert('Hata: ' + e.message);
+            }
+        }
+
+        document.getElementById('add-lesson-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const progressDiv = document.getElementById('upload-progress');
+            const originalText = submitBtn.innerText;
+
+            // Get Inputs
+            const titleInput = document.getElementById('l-title');
+            const fileInput = document.getElementById('l-video-file');
+            const urlInput = document.getElementById('l-video-url');
+
+            // Validation
+            if (!editingLessonId) {
+                if (fileInput.files.length === 0 && !urlInput.value) {
+                    alert('Lütfen bir video dosyası seçin veya bir URL girin.');
+                    return;
+                }
+            } else {
+                // In edit mode, if both empty, warn user
+                if (fileInput.files.length === 0 && !urlInput.value) {
+                    alert('Lütfen geçerli bir video kaynağı girin.');
+                    return;
+                }
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'İşleniyor...';
+            progressDiv.style.display = 'block';
+            progressDiv.innerText = 'Hazırlanıyor...';
+
+            try {
+                // 1. Upload Video if selected
+                let videoUrl = urlInput.value;
+
+                if (fileInput.files.length > 0) {
+                    progressDiv.innerText = 'Video yükleniyor...';
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+
+                    const uploadRes = await fetch(`${API_BASE_URL}/Upload/video`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+
+                    if (!uploadRes.ok) throw new Error('Video yükleme başarısız');
+                    const uploadData = await uploadRes.json();
+                    videoUrl = uploadData.url;
+                }
+
+                const data = {
+                    title: titleInput.value,
+                    videoUrl: videoUrl,
+                    courseId: parseInt(document.getElementById('l-course-id').value)
+                };
+
+                let res;
+                if (editingLessonId) {
+                    // Update
+                    res = await fetch(`${API_BASE_URL}/Lesson/${editingLessonId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    // Create
+                    res = await fetch(`${API_BASE_URL}/Lesson`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                if (!res.ok) throw new Error(editingLessonId ? 'Ders güncellenemedi' : 'Ders eklenemedi');
+
+                alert(editingLessonId ? 'Ders Güncellendi!' : 'Ders Eklendi!');
+                resetForm();
+                loadLessons(data.courseId);
+
+            } catch (err) {
+                alert('Hata: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+                progressDiv.style.display = 'none';
+            }
+        });
+
+        checkAuth();
+        loadDashboard();
+    </script>
+</body>
+
+</html>

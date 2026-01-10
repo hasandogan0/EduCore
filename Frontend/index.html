@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCore - Yeni Beceriler Edinin</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .instructor-scroll {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .instructor-card-home {
+            background: #1e293b;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            min-width: 250px;
+            max-width: 300px;
+        }
+
+        .instructor-card-home img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 2px solid var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">EduCore</div>
+        <nav>
+            <ul>
+                <li><a href="#">Anasayfa</a></li>
+                <li><a href="#courses">Kurslar</a></li>
+                <li><a href="#instructors">Eğitmenler</a></li>
+                <li><a href="#" class="view-btn" style="background:var(--primary-color)">Giriş Yap</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Potansiyelinizi Açığa Çıkarın<br>Uzman Liderliğindeki Kurslarla</h1>
+        <p>Yazılım, tasarım, işletme ve daha fazlasında binlerce kaliteli kursu keşfedin. Bugün öğrenmeye başlayın.</p>
+        <a href="#courses" class="cta-button">Kurslara Göz Atın</a>
+    </section>
+
+    <section id="courses" class="section">
+        <h2 class="section-title">Öne Çıkan Kurslar</h2>
+        <div class="course-grid" id="course-list">
+            <!-- Courses will be loaded here via JS -->
+            <div class="loading-state">Kurslar yükleniyor...</div>
+        </div>
+    </section>
+
+    <section id="instructors" class="section" style="background:var(--card-bg)">
+        <h2 class="section-title">Eğitmenlerimiz</h2>
+        <div class="instructor-scroll" id="instructor-list">
+            <p style="text-align:center">Yükleniyor...</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 EduCore. Tüm hakları saklıdır.</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

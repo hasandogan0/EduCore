@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurs Detayı - EduCore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .course-header {
+            background: linear-gradient(to bottom, #1e293b, var(--bg-color));
+            padding: 4rem 2rem;
+            color: white;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .header-text {
+            flex: 2;
+        }
+
+        .header-media {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .course-img {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .content-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .lesson-list {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+        }
+
+        .video-player-container {
+            flex: 2;
+            background: black;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+            /* Hidden until video selected */
+        }
+
+        .lesson-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .lesson-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .lesson-item.active {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">EduCore</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Anasayfa</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="course-header" class="course-header">
+        <div class="header-content">
+            <div class="header-text">
+                <div style="color:var(--primary-color); font-weight:600; margin-bottom:0.5rem" id="c-category">Kategori
+                </div>
+                <h1 id="c-title" style="font-size:2.5rem; margin-bottom:1rem">Yükleniyor...</h1>
+                <p id="c-desc" style="font-size:1.1rem; color:#cbd5e1; margin-bottom:2rem; line-height:1.6">...</p>
+                <div style="display:flex; align-items:center; gap:1rem">
+                    <span id="c-instructor">Eğitmen: ...</span>
+                    <span style="font-size:1.5rem; font-weight:bold" id="c-price">0.00 TL</span>
+                </div>
+                <div style="margin-top: 1.5rem" id="action-buttons">
+                    <button id="btn-buy" class="cta-button"
+                        style="display:none; background: var(--primary-color); border:none; padding: 0.8rem 2rem; color:white; border-radius:8px; cursor:pointer; font-weight:bold;"
+                        onclick="enrollCourse()">Kursu Satın Al</button>
+                    <button id="btn-go" class="cta-button"
+                        style="display:none; background: #10b981; border:none; padding: 0.8rem 2rem; color:white; border-radius:8px; cursor:pointer; font-weight:bold;"
+                        onclick="window.location.href='watch-course.html?courseId=' + courseId">Kursa Git</button>
+                </div>
+            </div>
+            <div class="header-media">
+                <img id="c-image" src="" class="course-img" alt="Course Image">
+            </div>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <div class="video-player-container" id="player-container">
+            <video id="main-video" controls style="width:100%; height:auto; aspect-ratio:16/9">
+                <source src="" type="video/mp4">
+                Tarayıcınız video oynatmayı desteklemiyor.
+            </video>
+            <div style="padding:1rem">
+                <h3 id="video-title">Ders Başlığı</h3>
+            </div>
+        </div>
+
+        <div class="lesson-list">
+            <h3>Ders İçeriği</h3>
+            <div id="lessons-container">
+                <p>Dersler yükleniyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5239/api';
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('id');
+        let currentCourse = null;
+
+        async function loadCourseDetails() {
+            if (!courseId) {
+                alert('Geçersiz kurs ID');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                let course;
+                // Try fetching specific course if endpoint exists, else filter
+                const res = await fetch(`${API_BASE_URL}/Courses/${courseId}`);
+                if (res.ok) {
+                    course = await res.json();
+                } else {
+                    const listRes = await fetch(`${API_BASE_URL}/Courses`);
+                    const list = await listRes.json();
+                    course = list.find(c => c.id == courseId);
+                }
+
+                if (!course) throw new Error('Kurs bulunamadı');
+                currentCourse = course;
+
+                document.getElementById('c-title').textContent = course.title;
+                document.getElementById('c-desc').textContent = course.description;
+                document.getElementById('c-category').textContent = course.categoryName;
+                document.getElementById('c-instructor').textContent = `Eğitmen: ${course.instructorName}`;
+                document.getElementById('c-price').textContent = `${course.price} TL`;
+
+                let imgUrl = course.imageUrl || '';
+                if (imgUrl.startsWith('/')) {
+                    imgUrl = API_BASE_URL.replace('/api', '') + imgUrl;
+                }
+                document.getElementById('c-image').src = imgUrl;
+
+                document.title = `${course.title} - EduCore`;
+
+                await checkEnrollmentStatus();
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('c-title').textContent = 'Hata oluştu';
+            }
+        }
+
+        async function checkEnrollmentStatus() {
+            const token = localStorage.getItem('token');
+            const buyBtn = document.getElementById('btn-buy');
+            const goBtn = document.getElementById('btn-go');
+            const playerContainer = document.getElementById('player-container');
+            const lessonsContainer = document.getElementById('lessons-container');
+
+            if (!token) {
+                // Not logged in -> Show Buy (which will redirect to login)
+                buyBtn.style.display = 'inline-block';
+                buyBtn.onclick = () => window.location.href = 'login.html';
+                // Lock content
+                playerContainer.style.display = 'none';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/Enrollments/check/${courseId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    const isEnrolled = await res.json();
+                    if (isEnrolled) {
+                        goBtn.style.display = 'inline-block';
+                        loadLessons(); // Only load lessons if enrolled (or show preview)
+                        // Actually, let's load lessons anyway but locking video is better UX if checking per lesson
+                        // For now, simple: Enrolled = See all.
+                    } else {
+                        buyBtn.style.display = 'inline-block';
+                        // Keep player hidden
+                    }
+                } else {
+                    // Maybe 401? Token expired?
+                    buyBtn.style.display = 'inline-block';
+                }
+            } catch (err) {
+                console.error("Enrollment check failed", err);
+            }
+        }
+
+        async function enrollCourse() {
+            const token = localStorage.getItem('token');
+            const result = await Swal.fire({
+                title: 'Kursu Satın Al',
+                text: "Bu kursu satın almak istediğinize emin misiniz?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet, Satın Al',
+                cancelButtonText: 'İptal'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) { // Added token check here as well for safety
+                    window.location.href = 'login.html';
+                    return;
+                }
+                if (!courseId) return;
+
+                const res = await fetch(`${API_BASE_URL}/Enrollments/${courseId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (res.ok) {
+                    await Swal.fire(
+                        'Satın Alındı!',
+                        'Kurs başarıyla hesabınıza tanımlandı. İyi dersler!',
+                        'success'
+                    );
+                    window.location.reload();
+                } else {
+                    const msg = await res.text();
+                    Swal.fire(
+                        'Hata!',
+                        msg || 'Satın alma işlemi başarısız oldu.',
+                        'error'
+                    );
+                }
+            } catch (error) {
+                console.error('Enrollment error:', error);
+                Swal.fire(
+                    'Hata!',
+                    'Bir sorun oluştu. Lütfen tekrar deneyin.',
+                    'error'
+                );
+            }
+        }
+
+        function scrollToContent() {
+            document.querySelector('.content-container').scrollIntoView({ behavior: 'smooth' });
+
+            // Auto play first lesson if not already playing
+            const firstLesson = document.querySelector('.lesson-item');
+            if (firstLesson) {
+                firstLesson.click();
+            }
+        }
+
+        async function loadLessons() {
+            const container = document.getElementById('lessons-container');
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/Lesson/course/${courseId}`);
+                if (!res.ok) throw new Error('Dersler alınamadı');
+
+                const lessons = await res.json();
+                container.innerHTML = '';
+
+                if (lessons.length === 0) {
+                    container.innerHTML = '<p>Bu kursta henüz ders bulunmuyor.</p>';
+                    return;
+                }
+
+                lessons.forEach((lesson, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'lesson-item';
+                    div.innerHTML = `
+                        <span>${index + 1}. ${lesson.title}</span>
+                        <span style="font-size:0.8rem; color:#aaa">Video</span>
+                    `;
+                    div.onclick = () => playVideo(lesson, div);
+                    container.appendChild(div);
+                });
+
+                // Auto-select first lesson? Maybe not.
+            } catch (err) {
+                container.innerHTML = '<p style="color:red">Dersler yüklenemedi.</p>';
+            }
+        }
+
+        function playVideo(lesson, element) {
+            const playerContainer = document.getElementById('player-container');
+            const video = document.getElementById('main-video');
+            const title = document.getElementById('video-title');
+
+            // Highlight active
+            document.querySelectorAll('.lesson-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            // Show player (if hidden)
+            playerContainer.style.display = 'block';
+
+            // Check if URL is absolute or relative
+            let src = lesson.videoUrl;
+
+            if (src && src.startsWith('/')) {
+                src = API_BASE_URL.replace('/api', '') + src;
+            }
+
+            video.src = src;
+            title.textContent = lesson.title;
+            video.play();
+        }
+
+        // Simple auth check for navbar
+        const user = localStorage.getItem('username');
+        if (user) {
+            const nav = document.querySelector('nav ul');
+            nav.innerHTML += `<li><span style="color:white; margin-left:1rem">Merhaba, ${user}</span></li>`;
+        }
+
+        loadCourseDetails();
+    </script>
+</body>
+
+</html>

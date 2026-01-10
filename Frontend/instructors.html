@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eğitmenler - EduCore</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .instructor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .instructor-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            text-align: center;
+            padding: 2rem;
+            transition: transform 0.2s;
+        }
+
+        .instructor-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .instructor-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 2px solid var(--primary-color);
+            background: #333;
+        }
+
+        .instructor-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .instructor-bio {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            background: linear-gradient(to bottom, #1e293b, var(--bg-color));
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">EduCore</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Anasayfa</a></li>
+                <li><a href="index.html#courses">Kurslar</a></li>
+                <li><a href="instructors.html" style="color:var(--primary-color)">Eğitmenler</a></li>
+                <li><a href="#" class="view-btn" id="nav-auth-btn" style="background:var(--primary-color)">Giriş Yap</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-header">
+        <h1 style="font-size:2.5rem; margin-bottom:1rem">Uzman Eğitmenlerimiz</h1>
+        <p style="color:var(--text-muted); font-size:1.1rem">Alanında uzman eğitmenlerle tanışın ve öğrenmeye başlayın.
+        </p>
+    </div>
+
+    <div id="instructors-container" class="instructor-grid">
+        <p style="text-align:center; grid-column:1/-1">Yükleniyor...</p>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5239/api';
+
+        async function loadInstructors() {
+            const container = document.getElementById('instructors-container');
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/Instructors`);
+                if (!res.ok) throw new Error('Eğitmenler yüklenemedi');
+
+                const instructors = await res.json();
+
+                container.innerHTML = '';
+                if (instructors.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; grid-column:1/-1">Henüz eğitmen bulunmuyor.</p>';
+                    return;
+                }
+
+                instructors.forEach(inst => {
+                    const img = inst.headshotUrl || 'https://via.placeholder.com/150?text=Instructor';
+                    const div = document.createElement('div');
+                    div.className = 'instructor-card';
+                    div.innerHTML = `
+                        <img src="${img}" alt="${inst.fullName}" class="instructor-img">
+                        <h3 class="instructor-name">${inst.fullName}</h3>
+                        <p class="instructor-bio">${inst.bio || 'Henüz biyografi eklenmemiş.'}</p>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (err) {
+                container.innerHTML = `<p style="text-align:center; grid-column:1/-1; color:red">Hata: ${err.message}</p>`;
+            }
+        }
+
+        // Auth check for button
+        const user = localStorage.getItem('username');
+        const btn = document.getElementById('nav-auth-btn');
+        if (user) {
+            btn.textContent = `Merhaba, ${user}`;
+            btn.href = '#';
+            btn.style.background = 'transparent';
+            btn.style.border = '1px solid var(--glass-border)';
+            // Add logout logic/link if needed, simplified here
+        } else {
+            btn.href = 'login.html';
+        }
+
+        loadInstructors();
+    </script>
+</body>
+
+</html>

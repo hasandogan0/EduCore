@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders İzle - EduCore</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .player-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .video-section {
+            flex: 3;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .playlist-section {
+            flex: 1;
+            background: var(--card-bg);
+            border-left: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            min-width: 300px;
+            max-width: 400px;
+        }
+
+        .playlist-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .lesson-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .lesson-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .lesson-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .lesson-item.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .back-link {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            backdrop-filter: blur(4px);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            max-height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="player-layout">
+        <div class="video-section">
+            <a href="#" id="back-btn" class="back-link">← Kursa Dön</a>
+            <video id="main-video" controls autoplay>
+                <source src="" type="video/mp4">
+                Tarayıcınız video oynatmayı desteklemiyor.
+            </video>
+            <div
+                style="position:absolute; bottom:2rem; left:2rem; background:rgba(0,0,0,0.6); padding:1rem; border-radius:8px">
+                <h2 id="video-title" style="margin:0; font-size:1.2rem">Ders Seçiniz</h2>
+            </div>
+        </div>
+        <div class="playlist-section">
+            <div class="playlist-header">
+                <h3 id="course-title" style="font-size:1.1rem; color:var(--text-muted)">Kurs İçeriği</h3>
+                <div style="font-size:0.9rem; margin-top:0.5rem; color:#aaa" id="progress-info">0% Tamamlandı</div>
+            </div>
+            <div class="lesson-list" id="lesson-list">
+                <div style="padding:1rem">Yükleniyor...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5239/api';
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
+
+        let totalLessons = 0;
+        let currentProgress = 0;
+
+        async function init() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            if (!courseId) {
+                alert('Kurs ID eksik');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('back-btn').href = `course-details.html?id=${courseId}`;
+
+            try {
+                // 1. Check Enrollment
+                const enrollRes = await fetch(`${API_BASE_URL}/Enrollments/check/${courseId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!enrollRes.ok) throw new Error('Erişim kontrolü başarısız');
+                const isEnrolled = await enrollRes.json();
+
+                // Fetch Progress
+                const progRes = await fetch(`${API_BASE_URL}/Enrollments/progress/${courseId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (progRes.ok) {
+                    currentProgress = await progRes.json();
+                    updateProgressUI();
+                }
+
+                // 2. Load Course Info
+                const courseRes = await fetch(`${API_BASE_URL}/Courses/${courseId}`);
+                if (courseRes.ok) {
+                    const course = await courseRes.json();
+                    document.getElementById('course-title').innerText = course.title;
+                }
+
+                // 3. Load Lessons
+                const res = await fetch(`${API_BASE_URL}/Lesson/course/${courseId}`);
+                const lessons = await res.json();
+                totalLessons = lessons.length;
+
+                renderLessons(lessons);
+
+                if (lessons.length > 0) {
+                    playLesson(lessons[0]);
+                }
+
+                // Add Event Listener for Video End
+                const video = document.getElementById('main-video');
+                video.onended = () => {
+                    onVideoEnded();
+                };
+
+            } catch (e) {
+                console.error(e);
+                alert('İçerik yüklenemedi: ' + e.message);
+            }
+        }
+
+        async function onVideoEnded() {
+            if (totalLessons === 0) return;
+            const increment = Math.ceil(100 / totalLessons);
+            if (currentProgress < 100) {
+                currentProgress = Math.min(100, currentProgress + increment);
+                updateProgressUI();
+
+                // Read token again to be safe
+                const token = localStorage.getItem('token');
+                await fetch(`${API_BASE_URL}/Enrollments/progress/${courseId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(currentProgress)
+                });
+            }
+        }
+
+        function updateProgressUI() {
+            document.getElementById('progress-info').innerText = `${currentProgress}% Tamamlandı`;
+            // Visualization bar?
+            document.getElementById('progress-info').style.color = currentProgress === 100 ? '#4ade80' : '#aaa';
+        }
+
+        function renderLessons(lessons) {
+            const list = document.getElementById('lesson-list');
+            list.innerHTML = '';
+
+            lessons.forEach((l, idx) => {
+                const item = document.createElement('div');
+                item.className = 'lesson-item';
+                item.id = `lesson-${l.id}`;
+                item.innerHTML = `
+                    <div style="background:rgba(255,255,255,0.1); width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem">${idx + 1}</div>
+                    <div style="font-size:0.9rem">${l.title}</div>
+                `;
+                item.onclick = () => playLesson(l);
+                list.appendChild(item);
+            });
+        }
+
+        function playLesson(lesson) {
+            // Update UI
+            document.querySelectorAll('.lesson-item').forEach(el => el.classList.remove('active'));
+            const activeItem = document.getElementById(`lesson-${lesson.id}`);
+            if (activeItem) activeItem.classList.add('active');
+
+            document.getElementById('video-title').innerText = lesson.title;
+
+            // Video Source Logic
+            let src = lesson.videoUrl;
+            if (src && src.startsWith('/')) {
+                src = `http://localhost:5239${src}`;
+            }
+
+            const video = document.getElementById('main-video');
+            video.src = src;
+            video.play();
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

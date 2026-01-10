@@ -1,0 +1,17 @@
+C:\Users\hasan\Documents\EduCore\EduCore.Business\bin\Debug\net8.0\EduCore.Business.deps.json
+C:\Users\hasan\Documents\EduCore\EduCore.Business\bin\Debug\net8.0\EduCore.Business.dll
+C:\Users\hasan\Documents\EduCore\EduCore.Business\bin\Debug\net8.0\EduCore.Business.pdb
+C:\Users\hasan\Documents\EduCore\EduCore.Business\bin\Debug\net8.0\EduCore.DataAccess.dll
+C:\Users\hasan\Documents\EduCore\EduCore.Business\bin\Debug\net8.0\EduCore.Entity.dll
+C:\Users\hasan\Documents\EduCore\EduCore.Business\bin\Debug\net8.0\EduCore.DataAccess.pdb
+C:\Users\hasan\Documents\EduCore\EduCore.Business\bin\Debug\net8.0\EduCore.Entity.pdb
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Business.csproj.AssemblyReference.cache
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Business.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Business.AssemblyInfoInputs.cache
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Business.AssemblyInfo.cs
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Business.csproj.CoreCompileInputs.cache
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore..98D2A654.Up2Date
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Business.dll
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\refint\EduCore.Business.dll
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Business.pdb
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\ref\EduCore.Business.dll

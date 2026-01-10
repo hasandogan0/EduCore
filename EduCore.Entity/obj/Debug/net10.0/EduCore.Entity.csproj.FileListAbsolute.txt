@@ -1,0 +1,12 @@
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\bin\Debug\net10.0\EduCore.Entity.deps.json
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\bin\Debug\net10.0\EduCore.Entity.dll
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\bin\Debug\net10.0\EduCore.Entity.pdb
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\obj\Debug\net10.0\EduCore.Entity.csproj.AssemblyReference.cache
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\obj\Debug\net10.0\EduCore.Entity.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\obj\Debug\net10.0\EduCore.Entity.AssemblyInfoInputs.cache
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\obj\Debug\net10.0\EduCore.Entity.AssemblyInfo.cs
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\obj\Debug\net10.0\EduCore.Entity.csproj.CoreCompileInputs.cache
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\obj\Debug\net10.0\EduCore.Entity.dll
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\obj\Debug\net10.0\refint\EduCore.Entity.dll
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\obj\Debug\net10.0\EduCore.Entity.pdb
+C:\Users\hasan\Documents\EduCore\EduCore.Entity\obj\Debug\net10.0\ref\EduCore.Entity.dll

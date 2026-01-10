@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EduCore</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-approve {
+            background: #22c55e;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">EduCore <span style="font-size:0.8rem; opacity:0.7">Admin</span></div>
+        <nav>
+            <ul>
+                <li><button onclick="logout()" class="view-btn" style="background:rgba(255,50,50,0.2)">Çıkış
+                        Yap</button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <h1>SuperAdmin Kontrol Paneli</h1>
+
+        <div class="section-card">
+            <h2>Bekleyen Eğitmen Onayları</h2>
+            <div id="instructor-list" class="user-list">
+                <p>Yükleniyor...</p>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>Bekleyen Kurs Onayları</h2>
+            <div id="course-list" class="user-list">
+                <p>Yükleniyor...</p>
+            </div>
+        </div>
+        <div class="section-card">
+            <h2>Tüm Kurslar Yönetimi</h2>
+            <div id="all-courses-list" class="user-list">
+                <p>Yükleniyor...</p>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>Tüm Kullanıcılar Yönetimi</h2>
+            <div id="all-users-list" class="user-list">
+                <p>Yükleniyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5239/api';
+
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+
+            if (!token || role !== 'SuperAdmin') {
+                window.location.href = 'login.html';
+                return;
+            }
+        }
+
+        async function loadPendingInstructors() {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/Admin/pending-instructors`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch');
+
+                const instructors = await response.json();
+                renderInstructors(instructors);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('instructor-list').innerHTML = '<p>Veri yüklenemedi.</p>';
+            }
+        }
+
+        function renderInstructors(users) {
+            const list = document.getElementById('instructor-list');
+            list.innerHTML = '';
+
+            if (users.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted)">Bekleyen onay yok.</p>';
+                return;
+            }
+
+            users.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'user-item';
+                const img = user.headshotUrl ? (user.headshotUrl.startsWith('http') ? user.headshotUrl : API_BASE_URL.replace('/api', '') + user.headshotUrl) : 'https://via.placeholder.com/40';
+
+                item.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:0.5rem">
+                         <img src="${img}" style="width:40px; height:40px; border-radius:50%; object-fit:cover">
+                         <div>
+                            <strong>${user.username}</strong><br>
+                            <span style="font-size:0.9rem; color:var(--text-muted)">${user.email}</span>
+                         </div>
+                    </div>
+                    <div style="display:flex; gap:0.5rem">
+                        <button class="action-btn btn-approve" onclick="approveInstructor('${user.username}')">Onayla</button>
+                        <button class="action-btn" style="background:#ef4444; color:#fff" onclick="deleteInstructor('${user.username}')">Sil</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        async function approveInstructor(username) {
+            const result = await Swal.fire({
+                title: 'Eğitmen Onayı',
+                text: `${username} kullanıcısını eğitmen olarak onaylıyor musunuz?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, Onayla',
+                cancelButtonText: 'İptal',
+                background: '#1f2937',
+                color: '#fff'
+            });
+
+            if (!result.isConfirmed) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                // Original URL based on established pattern
+                const res = await fetch(`${API_BASE_URL}/Admin/approve-instructor/${username}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Başarılı!',
+                        text: 'Eğitmen onaylandı.',
+                        icon: 'success',
+                        background: '#1f2937',
+                        color: '#fff',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    loadPendingInstructors();
+                } else {
+                    Swal.fire({ title: 'Hata', text: 'Onay başarısız oldu.', icon: 'error', background: '#1f2937', color: '#fff' });
+                }
+            } catch (err) {
+                Swal.fire({ title: 'Hata', text: err.message, icon: 'error', background: '#1f2937', color: '#fff' });
+            }
+        }
+
+        async function deleteInstructor(username) {
+            const result = await Swal.fire({
+                title: 'Eğitmen Sil',
+                text: `${username} kullanıcısını ve tüm kurslarını silmek istediğinize emin misiniz?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, Sil',
+                cancelButtonText: 'İptal',
+                confirmButtonColor: '#ef4444',
+                background: '#1f2937',
+                color: '#fff'
+            });
+
+            if (!result.isConfirmed) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_BASE_URL}/Admin/instructor/${username}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Silindi!',
+                        text: 'Eğitmen ve verileri silindi.',
+                        icon: 'success',
+                        background: '#1f2937',
+                        color: '#fff',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    loadPendingInstructors();
+                } else {
+                    Swal.fire({ title: 'Hata', text: 'Silme işlemi başarısız.', icon: 'error', background: '#1f2937', color: '#fff' });
+                }
+            } catch (err) {
+                Swal.fire({ title: 'Hata', text: err.message, icon: 'error', background: '#1f2937', color: '#fff' });
+            }
+        }
+
+        async function loadPendingCourses() {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/Admin/pending-courses`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch courses');
+
+                const courses = await response.json();
+                renderCourses(courses);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('course-list').innerHTML = '<p>Kurslar yüklenemedi.</p>';
+            }
+        }
+
+        function renderCourses(courses) {
+            const list = document.getElementById('course-list');
+            list.innerHTML = '';
+
+            if (courses.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted)">Bekleyen kurs onayı yok.</p>';
+                return;
+            }
+
+            courses.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'user-item';
+                item.innerHTML = `
+                    <div>
+                        <strong>${c.title}</strong><br>
+                        <span style="font-size:0.9rem; color:var(--text-muted)">${c.categoryName} • ${c.price} TL</span>
+                    </div>
+                    <div style="display:flex; gap:0.5rem">
+                        <button class="action-btn btn-approve" onclick="approveCourse(${c.id})">Onayla</button>
+                        <button class="action-btn" style="background:#ef4444; color:#fff" onclick="deleteCourse(${c.id})">Sil</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        async function deleteCourse(courseId) {
+            const result = await Swal.fire({
+                title: 'Kurs Sil',
+                text: "Bu kursu silmek istediğinize emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, Sil',
+                cancelButtonText: 'İptal',
+                confirmButtonColor: '#ef4444',
+                background: '#1f2937',
+                color: '#fff'
+            });
+
+            if (!result.isConfirmed) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_BASE_URL}/Admin/course/${courseId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Silindi!',
+                        text: 'Kurs silindi.',
+                        icon: 'success',
+                        background: '#1f2937',
+                        color: '#fff',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    loadPendingCourses();
+                } else {
+                    Swal.fire({ title: 'Hata', text: 'Silme işlemi başarısız.', icon: 'error', background: '#1f2937', color: '#fff' });
+                }
+            } catch (err) {
+                Swal.fire({ title: 'Hata', text: err.message, icon: 'error', background: '#1f2937', color: '#fff' });
+            }
+
+        }
+
+        async function approveCourse(courseId) {
+            const result = await Swal.fire({
+                title: 'Kurs Onayı',
+                text: "Bu kursu yayınlamak istediğinize emin misiniz?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yayınla',
+                cancelButtonText: 'İptal',
+                background: '#1f2937',
+                color: '#fff'
+            });
+
+            if (!result.isConfirmed) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_BASE_URL}/Admin/approve-course/${courseId}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Başarılı!',
+                        text: 'Kurs yayına alındı.',
+                        icon: 'success',
+                        background: '#1f2937',
+                        color: '#fff',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    loadPendingCourses();
+                } else {
+                    Swal.fire({ title: 'Hata', text: 'Kurs onayı başarısız.', icon: 'error', background: '#1f2937', color: '#fff' });
+                }
+            } catch (err) {
+                Swal.fire({ title: 'Hata', text: err.message, icon: 'error', background: '#1f2937', color: '#fff' });
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        checkAuth();
+        checkAuth();
+        loadPendingInstructors();
+        loadPendingCourses();
+        loadAllCourses();
+        loadAllUsers();
+
+        // New Functions
+        async function loadAllCourses() {
+            const token = localStorage.getItem('token');
+            const list = document.getElementById('all-courses-list');
+            try {
+                const res = await fetch(`${API_BASE_URL}/Admin/all-courses`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const courses = await res.json();
+
+                list.innerHTML = courses.length ? '' : '<p>Veri yok.</p>';
+                courses.forEach(c => {
+                    const btnColor = c.isActive ? '#ef4444' : '#22c55e';
+                    const btnText = c.isActive ? 'Pasif Yap' : 'Aktif Yap';
+                    list.innerHTML += `
+                        <div class="user-item">
+                            <div>
+                                <strong>${c.title}</strong> - ${c.instructor}<br>
+                                <span style="font-size:0.85rem; color:#aaa">Kazanç: ${c.totalEarnings} TL</span>
+                            </div>
+                            <button class="action-btn" style="background:${btnColor};color:white" onclick="toggleCourse(${c.id})">${btnText}</button>
+                        </div>
+                    `;
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadAllUsers() {
+            const token = localStorage.getItem('token');
+            const list = document.getElementById('all-users-list');
+            try {
+                const res = await fetch(`${API_BASE_URL}/Admin/all-users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await res.json();
+
+                list.innerHTML = users.length ? '' : '<p>Veri yok.</p>';
+                users.forEach(u => {
+                    const btnColor = u.isActive ? '#ef4444' : '#22c55e';
+                    const btnText = u.isActive ? 'Pasif Yap' : 'Aktif Yap';
+                    const earningsInfo = u.role === 'Instructor' ? `• Kazanç: ${u.totalEarnings} TL` : '';
+
+                    let actionButtons = '';
+                    if (u.role === 'SuperAdmin' || u.username.toLowerCase() === 'admin') {
+                        actionButtons = `<span style="color:#aaa; font-style:italic; font-size:0.9rem">Yönetici (İşlem Yapılamaz)</span>`;
+                    } else {
+                        actionButtons = `<button class="action-btn" style="background:${btnColor};color:white" onclick="toggleUser('${u.id}')">${btnText}</button>`;
+                    }
+
+                    const img = u.headshotUrl ? (u.headshotUrl.startsWith('http') ? u.headshotUrl : API_BASE_URL.replace('/api', '') + u.headshotUrl) : 'https://via.placeholder.com/40';
+
+                    list.innerHTML += `
+                        <div class="user-item">
+                            <div style="display:flex; align-items:center; gap:0.5rem">
+                                <img src="${img}" style="width:40px; height:40px; border-radius:50%; object-fit:cover">
+                                <div>
+                                    <strong>${u.fullName || u.username}</strong> (${u.role})<br>
+                                    <span style="font-size:0.85rem; color:#aaa">${u.email} ${earningsInfo}</span>
+                                </div>
+                            </div>
+                            ${actionButtons}
+                        </div>
+                    `;
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        async function toggleCourse(id) {
+            const result = await Swal.fire({
+                title: 'Durum Değişikliği',
+                text: "Kursun durumunu değiştirmek üzeresiniz.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, Değiştir',
+                cancelButtonText: 'İptal',
+                background: '#1f2937',
+                color: '#fff'
+            });
+
+            if (!result.isConfirmed) return;
+
+            await fetch(`${API_BASE_URL}/Admin/toggle-course/${id}`, { method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+            Swal.fire({
+                title: 'Güncellendi',
+                text: 'Kurs durumu değiştirildi.',
+                icon: 'success',
+                background: '#1f2937',
+                color: '#fff',
+                timer: 1000,
+                showConfirmButton: false
+            });
+            loadAllCourses();
+        }
+
+        async function toggleUser(id) {
+            const result = await Swal.fire({
+                title: 'Kullanıcı Durumu',
+                text: "Kullanıcının erişim durumunu değiştirmek üzeresiniz.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, Değiştir',
+                cancelButtonText: 'İptal',
+                background: '#1f2937',
+                color: '#fff'
+            });
+
+            if (!result.isConfirmed) return;
+
+            await fetch(`${API_BASE_URL}/Admin/toggle-user/${id}`, { method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+            Swal.fire({
+                title: 'Güncellendi',
+                text: 'Kullanıcı durumu değiştirildi.',
+                icon: 'success',
+                background: '#1f2937',
+                color: '#fff',
+                timer: 1000,
+                showConfirmButton: false
+            });
+            loadAllUsers();
+        }
+    </script>
+</body>
+
+</html>
