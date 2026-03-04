@@ -15,3 +15,4 @@ C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Busin
 C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\refint\EduCore.Business.dll
 C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Business.pdb
 C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\ref\EduCore.Business.dll
+C:\Users\hasan\Documents\EduCore\EduCore.Business\obj\Debug\net8.0\EduCore.Business.sourcelink.json

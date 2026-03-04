@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Lki/CEkCQdQ=",
+  "dgSpecHash": "u441ZMnWTdU=",
   "success": true,
   "projectFilePath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore.Business\\EduCore.Business.csproj",
   "expectedPackageFiles": [
@@ -63,7 +63,7 @@
     {
       "code": "NU1902",
       "level": "Warning",
-      "message": "'System.IdentityModel.Tokens.Jwt' 7.0.3 paketinde önem derecesi orta olan bilinen bir https://github.com/advisories/GHSA-59j7-ghrg-fj52 güvenlik açığı var",
+      "message": "Package 'System.IdentityModel.Tokens.Jwt' 7.0.3 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-59j7-ghrg-fj52",
       "projectPath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore.Business\\EduCore.Business.csproj",
       "warningLevel": 1,
       "filePath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore.Business\\EduCore.Business.csproj",

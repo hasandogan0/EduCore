@@ -1,1 +1,36 @@
+## [ Visual Studio Önbellek ve Kullanıcı Dosyaları ]
 .vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.docstates
+
+## [ .NET Core / ASP.NET Core Spesifik ]
+project.lock.json
+project.fragment.lock.json
+artifacts/
+out/
+
+## [ Test Sonuçları ]
+TestResults/
+*.trx
+*.coverage
+
+## [ Paket Yöneticileri ]
+*.nupkg
+# NuGet paketlerini geri yüklenebilir oldukları için göndermiyoruz
+packages/
+!packages/build/
+node_modules/
+
+## [ Veritabanı ve Geçici Dosyalar ]
+*.db
+*.sqlite
+*.log
+
+## [ İşletim Sistemi Spesifik ]
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
