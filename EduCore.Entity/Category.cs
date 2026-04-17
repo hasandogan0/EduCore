@@ -1,10 +1,9 @@
-namespace EduCore.Entity
+namespace EduCore.Entity;
+
+public class Category
 {
-    public class Category
-    {
-        public int Id { get; set; }
-        public required string Name { get; set; }
-        public string? Description { get; set; }
-        public ICollection<Course>? Courses { get; set; }
-    }
+    public int Id { get; set; }
+    public required string Name { get; set; }
+    public string? Description { get; set; }
+    public ICollection<Course>? Courses { get; set; }
 }
