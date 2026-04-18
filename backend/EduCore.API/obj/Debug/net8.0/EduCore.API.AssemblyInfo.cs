@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("b64d087d-13dd-420a-9980-11db876bac7e")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("EduCore.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+89fd237181fa26dd3ff480550c894153d0d5f845")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+31040293e154deaff232de63257bd26548458410")]
 [assembly: System.Reflection.AssemblyProductAttribute("EduCore.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EduCore.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
