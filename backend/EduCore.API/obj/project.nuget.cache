@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "YY0zUGhmj4c=",
+  "dgSpecHash": "yyg+fHq1lo0=",
   "success": true,
   "projectFilePath": "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.API\\EduCore.API.csproj",
   "expectedPackageFiles": [
@@ -32,6 +32,7 @@
     "C:\\Users\\hasan\\.nuget\\packages\\microsoft.entityframeworkcore.design\\8.0.0\\microsoft.entityframeworkcore.design.8.0.0.nupkg.sha512",
     "C:\\Users\\hasan\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\8.0.0\\microsoft.entityframeworkcore.relational.8.0.0.nupkg.sha512",
     "C:\\Users\\hasan\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\8.0.0\\microsoft.entityframeworkcore.sqlserver.8.0.0.nupkg.sha512",
+    "C:\\Users\\hasan\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\10.0.6\\microsoft.entityframeworkcore.tools.10.0.6.nupkg.sha512",
     "C:\\Users\\hasan\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\hasan\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\8.0.0\\microsoft.extensions.caching.abstractions.8.0.0.nupkg.sha512",
     "C:\\Users\\hasan\\.nuget\\packages\\microsoft.extensions.caching.memory\\8.0.0\\microsoft.extensions.caching.memory.8.0.0.nupkg.sha512",

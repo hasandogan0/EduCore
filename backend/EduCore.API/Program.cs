@@ -7,25 +7,27 @@ using EduCore.Entity;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using EduCore.Business.Mapping; // Bunu ekledik
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// --- Services Configuration ---
 builder.Services.AddControllers();
-
-builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// --- AutoMapper Configuration (Eksik Olan Kritik Parça) ---
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+// --- FluentValidation Configuration ---
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateLessonDtoValidator>();
 
-// Database Configuration
+// --- Database Configuration ---
 builder.Services.AddDbContext<EduCoreDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Identity Configuration
+// --- Identity Configuration ---
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<EduCoreDbContext>()
     .AddDefaultTokenProviders();
@@ -40,7 +42,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = true;
 });
 
-// Dependency Injection
+// --- Dependency Injection ---
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -48,9 +50,7 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 
-
-
-// JWT Authentication
+// --- JWT Authentication ---
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "PleaseProvideASecretKeyHereThatIsLongEnough123456789";
 var key = System.Text.Encoding.UTF8.GetBytes(jwtKey);
 
@@ -73,21 +73,20 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Add CORS
+// --- CORS Configuration ---
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- Middleware Pipeline ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -95,31 +94,27 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowAll");
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    ServeUnknownFileTypes = true,
-    DefaultContentType = "video/mp4"
-});
+// Dosya yüklemeleri için wwwroot kullanımını aktif ediyoruz
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
-// Seed Data
+// --- Seed Data ---
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
-         await EduCore.API.SeedData.Initialize(services);
+        await EduCore.API.SeedData.Initialize(services);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred seeding the DB.");
+        logger.LogError(ex, "DB Seed işlemi sırasında hata oluştu.");
     }
 }
 
