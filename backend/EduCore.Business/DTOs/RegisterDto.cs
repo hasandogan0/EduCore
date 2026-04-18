@@ -1,4 +1,9 @@
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EduCore.Business.DTOs
 {
@@ -6,7 +11,7 @@ namespace EduCore.Business.DTOs
     {
         [Required]
         public string Username { get; set; } = string.Empty;
-        
+
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
@@ -21,24 +26,5 @@ namespace EduCore.Business.DTOs
         public string Role { get; set; } = "Student";
 
         public Microsoft.AspNetCore.Http.IFormFile? ProfileImage { get; set; }
-    }
-
-    public class LoginDto
-    {
-        [Required]
-        public string Username { get; set; } = string.Empty;
-
-        [Required]
-        public string Password { get; set; } = string.Empty;
-    }
-
-    public class AuthResponseDto
-    {
-        public string Token { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Role { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
-        public string HeadshotUrl { get; set; } = string.Empty;
     }
 }

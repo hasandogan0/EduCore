@@ -14,14 +14,4 @@ namespace EduCore.Business.DTOs
         public string InstructorId { get; set; } = string.Empty;
         public bool IsActive { get; set; }
     }
-
-    public class CreateCourseDto
-    {
-        public string Title { get; set; } = string.Empty;
-        public string? Description { get; set; }
-        public decimal Price { get; set; }
-        public string? ImageUrl { get; set; }
-        public int Quota { get; set; }
-        public int CategoryId { get; set; }
-    }
 }
