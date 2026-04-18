@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EduCore.Business.Validators
 {
-    internal class ApplicationUserValidator
+    internal class LoginDtoValidator
     {
     }
 }
