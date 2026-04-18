@@ -1,58 +1,53 @@
-# EduCore - Online Eğitim Platformu 
+# EduCore - Online Learning Platform / Online Eğitim Platformu
+
+[English](#english) | [Türkçe](#türkçe)
+
+---
+
+## English
+
+EduCore is a comprehensive Learning Management System (LMS) built with modern web technologies. It provides a robust ecosystem where instructors can create courses and students can enroll and follow their lessons seamlessly.
+
+### Architecture
+The project follows a **Monorepo** structure:
+- **backend/**: Layered architecture built with .NET 8, Web API, Entity Framework Core, and DTO-based Fluent Validation.
+- **frontend/**: Modern UI developed with HTML5, CSS3, and Vanilla JavaScript.
+
+### Tech Stack
+- **Backend:** .NET 8, MySQL, EF Core, Fluent Validation, AutoMapper, JWT & Identity API.
+- **Frontend:** HTML5, CSS3, Vanilla JS (Fetch API).
+
+### Getting Started
+1. **Clone:** `git clone https://github.com/hasandogan0/EduCore.git`
+2. **Backend:** `cd backend && dotnet run --project EduCore.API`
+3. **Frontend:** Open `frontend/index.html` (Live Server recommended).
+
+---
+
+## Türkçe
 
 EduCore, modern web teknolojileri ile geliştirilmiş kapsamlı bir online eğitim (LMS) platformudur. Eğitmenlerin kurs oluşturabildiği, öğrencilerin ise bu kurslara kayıt olup dersleri takip edebildiği bir ekosistem sunar.
 
-## Mimari Yapı
-
+### Mimari Yapı
 Proje, **Monorepo** yapısında geliştirilmiştir:
-- **backend/**: .NET 8, Web API, Entity Framework Core ve Fluent Validation ile geliştirilmiş katmanlı mimari.
-- **frontend/**: Html,Css ve Vanilla Js ile geliştirilmiş modern kullanıcı arayüzü.
+- **backend/**: .NET 8, Web API, EF Core ve Fluent Validation ile geliştirilmiş katmanlı mimari.
+- **frontend/**: HTML5, CSS3 ve Vanilla JS ile geliştirilmiş modern kullanıcı arayüzü.
 
-## Kullanılan Teknolojiler
+### Kullanılan Teknolojiler
+- **Backend:** .NET 8, MySQL, EF Core, Fluent Validation, AutoMapper, JWT & Identity API.
+- **Frontend:** HTML5, CSS3, Vanilla JS (Fetch API).
 
-### Backend
-- **Framework:** .NET 8 (Web API)
-- **Veritabanı:** MySql
-- **ORM:** Entity Framework Core
-- **Doğrulama:** Fluent Validation (DTO tabanlı)
-- **Mapping:** AutoMapper
-- **Güvenlik:** JWT Authentication & Identity API
+### Başlangıç
+1. **Klonla:** `git clone https://github.com/hasandogan0/EduCore.git`
+2. **Backend:** `cd backend && dotnet run --project EduCore.API`
+3. **Frontend:** `frontend/index.html` dosyasını tarayıcıda açın (Live Server önerilir).
 
-## Proje Klasör Yapısı
+---
+
+## Project Structure / Proje Yapısı
 
 ```text
 EduCore/
-├── backend/             # Tüm API ve Business mantığı
-│   ├── EduCore.API      # Sunum Katmanı
-│   ├── EduCore.Business # İş Mantığı ve Validasyonlar
-│   ├── EduCore.DataAccess # Veritabanı İşlemleri
-│   └── EduCore.Entity   # Veritabanı Modelleri
-├── frontend/            # Kullanıcı arayüzü dosyaları
-└── README.md            # Proje dokümantasyonu
-
-
-Projeyi yerel bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyin:
-
-1- Depoyu Klonlayın
-
-git clone [https://github.com/hasandogan0/EduCore.git](https://github.com/hasandogan0/EduCore.git)
-cd EduCore
-
-2- Backend'i Çalıştırın
-
-cd backend
-dotnet restore
-dotnet run --project EduCore.API
-
-3- Frontend'i Çalıştırın
-    Frontend herhangi bir kurulum gerektirmez. frontend/ klasörüne gidin ve favori tarayıcınızla index.html dosyasını açın.
-
-    Öneri: Geliştirme sırasında verilerin doğru yüklenmesi için Live Server (VS Code eklentisi) kullanmanız tavsiye edilir.
-
-DTO Tabanlı Validasyon: Fluent Validation ile güvenli veri girişi.
-
-Katmanlı Mimari: Sorumlulukların net ayrımı (Separation of Concerns).
-
-Gelişmiş Rol Yönetimi: Öğrenci ve Eğitmen rolleri.
-
-⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!
+├── backend/             # API & Business Logic
+├── frontend/            # UI Files / Arayüz Dosyaları
+└── README.md            # Documentation / Dokümantasyon
