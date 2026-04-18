@@ -1,6 +1,6 @@
 using EduCore.Business.DTOs;
 
-namespace EduCore.Business.Services
+namespace EduCore.Business.Services.Abstract
 {
     public interface IAdminService
     {

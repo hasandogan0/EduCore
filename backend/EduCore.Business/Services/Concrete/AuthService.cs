@@ -1,4 +1,5 @@
 using EduCore.Business.DTOs;
+using EduCore.Business.Services.Abstract;
 using EduCore.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace EduCore.Business.Services
+namespace EduCore.Business.Services.Concrete
 {
     public class AuthService : IAuthService
     {

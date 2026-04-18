@@ -1,5 +1,5 @@
 using EduCore.Business.DTOs;
-using EduCore.Business.Services;
+using EduCore.Business.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduCore.API.Controllers

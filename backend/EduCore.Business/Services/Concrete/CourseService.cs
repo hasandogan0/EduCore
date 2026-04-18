@@ -1,9 +1,10 @@
 using EduCore.Business.DTOs;
+using EduCore.Business.Services.Abstract;
 using EduCore.DataAccess.Repositories;
 using EduCore.Entity;
 using Microsoft.AspNetCore.Identity;
 
-namespace EduCore.Business.Services
+namespace EduCore.Business.Services.Concrete
 {
     public class CourseService : ICourseService
     {

@@ -1,7 +1,8 @@
+using EduCore.Business.Services.Abstract;
 using EduCore.DataAccess.Repositories;
 using EduCore.Entity;
 
-namespace EduCore.Business.Services
+namespace EduCore.Business.Services.Concrete
 {
     public class EnrollmentService : IEnrollmentService
     {

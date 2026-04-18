@@ -3,8 +3,9 @@ using EduCore.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EduCore.DataAccess.Repositories;
+using EduCore.Business.Services.Abstract;
 
-namespace EduCore.Business.Services
+namespace EduCore.Business.Services.Concrete
 {
     public class AdminService : IAdminService
     {
