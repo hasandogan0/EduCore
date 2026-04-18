@@ -1,74 +1,63 @@
+using AutoMapper;
 using EduCore.Business.DTOs;
 using EduCore.Business.Services.Abstract;
 using EduCore.DataAccess.Repositories;
 using EduCore.Entity;
 
-namespace EduCore.Business.Services.Concrete
+namespace EduCore.Business.Services.Concrete;
+
+public class LessonService : ILessonService
 {
-    public class LessonService : ILessonService
+    private readonly IRepository<Lesson> _lessonRepository;
+    private readonly IMapper _mapper; // AutoMapper eklendi
+
+    public LessonService(IRepository<Lesson> lessonRepository, IMapper mapper) // Inject edildi
     {
-        private readonly IRepository<Lesson> _lessonRepository;
+        _lessonRepository = lessonRepository;
+        _mapper = mapper;
+    }
 
-        public LessonService(IRepository<Lesson> lessonRepository)
-        {
-            _lessonRepository = lessonRepository;
-        }
+    public async Task<IEnumerable<LessonDto>> GetLessonsByCourseIdAsync(int courseId)
+    {
+        var lessons = await _lessonRepository.FindAsync(l => l.CourseId == courseId);
 
-        public async Task<IEnumerable<LessonDto>> GetLessonsByCourseIdAsync(int courseId)
-        {
-            var lessons = await _lessonRepository.FindAsync(l => l.CourseId == courseId);
-            return lessons.Select(MapToDto);
-        }
+        // Manuel Select(MapToDto) yerine AutoMapper
+        return _mapper.Map<IEnumerable<LessonDto>>(lessons);
+    }
 
-        public async Task<LessonDto> AddLessonAsync(CreateLessonDto lessonDto)
-        {
-            var lesson = new Lesson
-            {
-                Title = lessonDto.Title,
-                VideoUrl = lessonDto.VideoUrl,
-                CourseId = lessonDto.CourseId
-            };
+    public async Task<LessonDto> AddLessonAsync(CreateLessonDto lessonDto)
+    {
+        // CreateLessonDto -> Lesson (Entity)
+        var lesson = _mapper.Map<Lesson>(lessonDto);
 
-            await _lessonRepository.AddAsync(lesson);
-            await _lessonRepository.SaveChangesAsync();
+        await _lessonRepository.AddAsync(lesson);
+        await _lessonRepository.SaveChangesAsync();
 
-            return MapToDto(lesson);
-        }
+        // Lesson (Entity) -> LessonDto
+        return _mapper.Map<LessonDto>(lesson);
+    }
 
-        public async Task DeleteLessonAsync(int id)
-        {
-            await _lessonRepository.DeleteAsync(id);
-            await _lessonRepository.SaveChangesAsync();
-        }
+    public async Task UpdateLessonAsync(int id, CreateLessonDto lessonDto)
+    {
+        var lesson = await _lessonRepository.GetByIdAsync(id);
+        if (lesson == null) throw new Exception("Ders bulunamadı.");
 
-        public async Task UpdateLessonAsync(int id, CreateLessonDto lessonDto)
-        {
-            var lesson = await _lessonRepository.GetByIdAsync(id);
-            if (lesson != null)
-            {
-                lesson.Title = lessonDto.Title;
-                lesson.VideoUrl = lessonDto.VideoUrl;
-                
-                await _lessonRepository.UpdateAsync(lesson);
-                await _lessonRepository.SaveChangesAsync();
-            }
-        }
+        // Mevcut nesneyi DTO'daki verilerle güncelle
+        _mapper.Map(lessonDto, lesson);
 
-        public async Task<LessonDto?> GetLessonByIdAsync(int id)
-        {
-            var lesson = await _lessonRepository.GetByIdAsync(id);
-            return lesson == null ? null : MapToDto(lesson);
-        }
+        await _lessonRepository.UpdateAsync(lesson);
+        await _lessonRepository.SaveChangesAsync();
+    }
 
-        private LessonDto MapToDto(Lesson lesson)
-        {
-            return new LessonDto
-            {
-                Id = lesson.Id,
-                Title = lesson.Title,
-                VideoUrl = lesson.VideoUrl,
-                CourseId = lesson.CourseId
-            };
-        }
+    public async Task<LessonDto?> GetLessonByIdAsync(int id)
+    {
+        var lesson = await _lessonRepository.GetByIdAsync(id);
+        return _mapper.Map<LessonDto>(lesson);
+    }
+
+    public async Task DeleteLessonAsync(int id)
+    {
+        await _lessonRepository.DeleteAsync(id);
+        await _lessonRepository.SaveChangesAsync();
     }
 }

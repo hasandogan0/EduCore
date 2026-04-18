@@ -1,114 +1,85 @@
 using EduCore.Business.DTOs;
-using EduCore.DataAccess.Repositories;
-using EduCore.Entity;
-using Microsoft.AspNetCore.Identity;
+using EduCore.Business.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using EduCore.Business.Services.Abstract;
 
-namespace EduCore.API.Controllers
+namespace EduCore.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class EnrollmentsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EnrollmentsController : ControllerBase
+    private readonly IEnrollmentService _enrollmentService;
+
+    public EnrollmentsController(IEnrollmentService enrollmentService)
     {
-        private readonly IEnrollmentService _enrollmentService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IRepository<Category> _categoryRepository;
+        _enrollmentService = enrollmentService;
+        // Diğer gereksiz UserManager ve CategoryRepository bağımlılıklarını sildik
+    }
 
-        public EnrollmentsController(IEnrollmentService enrollmentService, 
-            UserManager<ApplicationUser> userManager,
-            IRepository<Category> categoryRepository)
+    [HttpPost("{courseId}")]
+    [Authorize(Roles = "Student")]
+    public async Task<IActionResult> Enroll(int courseId)
+    {
+        var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(studentId)) return Unauthorized();
+
+        try
         {
-            _enrollmentService = enrollmentService;
-            _userManager = userManager;
-            _categoryRepository = categoryRepository;
+            await _enrollmentService.EnrollStudentAsync(courseId, studentId);
+            return Ok(new { Message = "Kursa başarıyla kayıt olundu." });
         }
-
-        [HttpPost("{courseId}")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> Enroll(int courseId)
+        catch (Exception ex)
         {
-            var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(studentId)) return Unauthorized();
-
-            try
-            {
-                await _enrollmentService.EnrollStudentAsync(courseId, studentId);
-                return Ok("Enrolled successfully.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return BadRequest(new { Message = ex.Message });
         }
+    }
 
-        [HttpGet("check/{courseId}")]
-        [Authorize]
-        public async Task<IActionResult> IsEnrolled(int courseId)
-        {
-            var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(studentId)) return Unauthorized();
+    [HttpGet("check/{courseId}")]
+    [Authorize]
+    public async Task<IActionResult> IsEnrolled(int courseId)
+    {
+        var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(studentId)) return Unauthorized();
 
-            var result = await _enrollmentService.IsStudentEnrolledAsync(courseId, studentId);
-            return Ok(result);
-        }
+        var result = await _enrollmentService.IsStudentEnrolledAsync(courseId, studentId);
+        return Ok(result);
+    }
 
-        [HttpGet("my-courses")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetMyCourses()
-        {
-            var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(studentId)) return Unauthorized();
+    [HttpGet("my-courses")]
+    [Authorize(Roles = "Student")]
+    public async Task<IActionResult> GetMyCourses()
+    {
+        var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(studentId)) return Unauthorized();
 
-            var courses = await _enrollmentService.GetStudentEnrollmentsAsync(studentId);
-            
-            // Map to DTOs manually to avoid JSON cycles and populate names
-            var dtos = new List<CourseDto>();
-            foreach (var course in courses)
-            {
-                var category = await _categoryRepository.GetByIdAsync(course.CategoryId);
-                var instructor = await _userManager.FindByIdAsync(course.InstructorId);
+        // Servis katmanında yaptığımız değişiklik sayesinde artık doğrudan DTO listesi geliyor.
+        // Controller içinde manuel foreach/mapping yapmamıza gerek kalmadı.
+        var courses = await _enrollmentService.GetStudentEnrollmentsAsync(studentId);
 
-                dtos.Add(new CourseDto
-                {
-                    Id = course.Id,
-                    Title = course.Title,
-                    Description = course.Description,
-                    Price = course.Price,
-                    ImageUrl = course.ImageUrl,
-                    Quota = course.Quota,
-                    Status = course.Status.ToString(),
-                    CategoryName = category?.Name ?? "Unknown",
-                    InstructorName = instructor?.FullName ?? "Unknown",
-                    InstructorId = course.InstructorId
-                });
-            }
+        return Ok(courses);
+    }
 
-            return Ok(dtos);
-        }
+    [HttpPost("progress/{courseId}")]
+    [Authorize(Roles = "Student")]
+    public async Task<IActionResult> UpdateProgress(int courseId, [FromBody] int progress)
+    {
+        var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(studentId)) return Unauthorized();
 
-        [HttpPost("progress/{courseId}")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> UpdateProgress(int courseId, [FromBody] int progress)
-        {
-             var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-             if (string.IsNullOrEmpty(studentId)) return Unauthorized();
-             
-             await _enrollmentService.UpdateProgressAsync(courseId, studentId, progress);
-             return Ok();
-        }
+        await _enrollmentService.UpdateProgressAsync(courseId, studentId, progress);
+        return Ok(new { Message = "İlerleme kaydedildi." });
+    }
 
-        [HttpGet("progress/{courseId}")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetProgress(int courseId)
-        {
-             var studentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-             if (string.IsNullOrEmpty(studentId)) return Unauthorized();
-             
-             var progress = await _enrollmentService.GetEnrollmentProgressAsync(courseId, studentId);
-             return Ok(progress);
-        }
+    [HttpGet("progress/{courseId}")]
+    [Authorize(Roles = "Student")]
+    public async Task<IActionResult> GetProgress(int courseId)
+    {
+        var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(studentId)) return Unauthorized();
+
+        var progress = await _enrollmentService.GetEnrollmentProgressAsync(courseId, studentId);
+        return Ok(progress);
     }
 }

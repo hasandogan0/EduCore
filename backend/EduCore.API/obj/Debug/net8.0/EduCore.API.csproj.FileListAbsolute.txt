@@ -296,10 +296,11 @@ C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\staticweba
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\swae.build.ex.cache
-C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\EduCore..B35F9802.Up2Date
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\EduCore.API.dll
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\refint\EduCore.API.dll
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\EduCore.API.pdb
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\EduCore.API.genruntimeconfig.cache
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\ref\EduCore.API.dll
+C:\Users\hasan\Documents\EduCore\backend\EduCore.API\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\hasan\Documents\EduCore\backend\EduCore.API\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

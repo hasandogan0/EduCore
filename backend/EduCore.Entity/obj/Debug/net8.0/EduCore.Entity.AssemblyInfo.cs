@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EduCore.Entity")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8e45573ff170f1c3aaedc21d1ac5d17ac0357c80")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ba4fc2fbb20fa0b006bac1665ab82c6f79af2ac")]
 [assembly: System.Reflection.AssemblyProductAttribute("EduCore.Entity")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EduCore.Entity")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
