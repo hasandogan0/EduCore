@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EduCore.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+31040293e154deaff232de63257bd26548458410")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4c5c69ea232bfb02298a8607e12acc1156c7900c")]
 [assembly: System.Reflection.AssemblyProductAttribute("EduCore.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EduCore.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

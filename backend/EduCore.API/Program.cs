@@ -93,6 +93,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<EduCoreDbContext>();
+        // Veritabanı hazır olana kadar (Docker'da SQL'in açılması vakit alabilir) 
+        // beklemek gerekebilir, Migrate komutu bunu dener.
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        // Loglama yapabilirsin
+        Console.WriteLine($"Migration sırasında hata oluştu: {ex.Message}");
+    }
+}
+
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 

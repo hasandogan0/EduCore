@@ -1,0 +1,28 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: educore_sql_server
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${SQL_SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  api:
+    image: educore-api
+    container_name: educore_backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=${SQL_DATABASE};User Id=${SQL_USER};Password=${SQL_SA_PASSWORD};TrustServerCertificate=True
+      - Jwt__Key=${JWT_KEY}
+    depends_on:
+      - db
+
+volumes:
+  mssql_data:

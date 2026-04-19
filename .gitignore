@@ -1,4 +1,8 @@
 ## [ Visual Studio Önbellek ve Kullanıcı Dosyaları ]
+.env
+.env.local
+.env.*.local
+
 .vs/
 [Bb]in/
 [Oo]bj/
@@ -11,6 +15,16 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 out/
+
+## Docker Dosyaları
+.dockerignore
+# Docker veritabanı verilerinin saklandığı klasör (eğer dışarıdaysa)
+mssql_data/
+db_data/
+
+## Kullanıcı Yüklemeleri (Resim/Video testleri GitHub'a gitmesin)
+EduCore.API/wwwroot/uploads/*
+!EduCore.API/wwwroot/uploads/.gitkeep
 
 ## [ Test Sonuçları ]
 TestResults/
