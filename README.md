@@ -46,6 +46,8 @@ Proje, **Monorepo** yapısında geliştirilmiştir:
 Docker Desktop veya Ubuntu üzerindeki Docker Engine kurulumundan sonra proje kökünde `.env`
 dosyasını oluşturun:
 
+`.env.example` dosyasını kopyalayıp değerleri kendi ortamınıza göre güncelleyebilirsiniz.
+
 ```env
 SQL_SA_PASSWORD=StrongPassword123!
 SQL_DATABASE=EduCoreDb
@@ -59,6 +61,15 @@ docker compose up --build
 ```
 
 API, Ubuntu tabanlı .NET 8 container içinde `http://localhost:8080` adresinde çalışır.
+
+### GitHub Actions CI/CD
+`.github/workflows/ci-cd.yml` workflow'u `main` branch'ine gönderilen commitlerde ve
+pull request'lerde .NET build/test adımlarını çalıştırır. `main` branch'ine başarılı bir
+push sonrasında Ubuntu tabanlı Docker image'ı GitHub Container Registry'ye gönderilir:
+
+```text
+ghcr.io/hasandogan0/educore:latest
+```
 
 ---
 
