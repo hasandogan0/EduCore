@@ -42,6 +42,24 @@ Proje, **Monorepo** yapısında geliştirilmiştir:
 2. **Backend:** `cd backend && dotnet run --project EduCore.API`
 3. **Frontend:** `frontend/index.html` dosyasını tarayıcıda açın (Live Server önerilir).
 
+### Docker ile çalıştırma
+Docker Desktop veya Ubuntu üzerindeki Docker Engine kurulumundan sonra proje kökünde `.env`
+dosyasını oluşturun:
+
+```env
+SQL_SA_PASSWORD=StrongPassword123!
+SQL_DATABASE=EduCoreDb
+JWT_KEY=change-this-to-a-long-secret-key
+```
+
+Ardından proje kökünde:
+
+```bash
+docker compose up --build
+```
+
+API, Ubuntu tabanlı .NET 8 container içinde `http://localhost:8080` adresinde çalışır.
+
 ---
 
 ## Project Structure / Proje Yapısı

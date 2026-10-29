@@ -4863,11 +4863,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.API\\EduCore.API.csproj",
+      "projectUniqueName": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.API\\EduCore.API.csproj",
       "projectName": "EduCore.API",
-      "projectPath": "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.API\\EduCore.API.csproj",
+      "projectPath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.API\\EduCore.API.csproj",
       "packagesPath": "C:\\Users\\hasan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.API\\obj\\",
+      "outputPath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -4889,14 +4889,14 @@
           "framework": "net8.0",
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.Business\\EduCore.Business.csproj": {
-              "projectPath": "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.Business\\EduCore.Business.csproj"
+            "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.Business\\EduCore.Business.csproj": {
+              "projectPath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.Business\\EduCore.Business.csproj"
             },
-            "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.DataAccess\\EduCore.DataAccess.csproj": {
-              "projectPath": "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.DataAccess\\EduCore.DataAccess.csproj"
+            "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.DataAccess\\EduCore.DataAccess.csproj": {
+              "projectPath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.DataAccess\\EduCore.DataAccess.csproj"
             },
-            "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.Entity\\EduCore.Entity.csproj": {
-              "projectPath": "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.Entity\\EduCore.Entity.csproj"
+            "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.Entity\\EduCore.Entity.csproj": {
+              "projectPath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.Entity\\EduCore.Entity.csproj"
             }
           }
         }
@@ -4911,7 +4911,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.300"
+      "SdkAnalysisLevel": "11.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -4978,7 +4978,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300-preview.0.26177.108/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\11.0.100-rc.2.26504.105/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

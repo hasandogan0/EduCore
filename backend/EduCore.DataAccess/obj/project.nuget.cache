@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "MwHg7OTsN8Y=",
+  "dgSpecHash": "wIJvVb8P+Nw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.DataAccess\\EduCore.DataAccess.csproj",
+  "projectFilePath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.DataAccess\\EduCore.DataAccess.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\hasan\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\hasan\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

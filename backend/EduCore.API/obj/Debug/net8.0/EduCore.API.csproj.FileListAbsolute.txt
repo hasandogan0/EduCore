@@ -305,3 +305,7 @@ C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\ref\EduCor
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\bin\Debug\net8.0\AutoMapper.dll
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\hasan\Documents\EduCore\backend\EduCore.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\hasan\Documents\EduCore\EduCore\backend\EduCore.API\obj\Debug\net8.0\EduCore.API.csproj.AssemblyReference.cache
+C:\Users\hasan\Documents\EduCore\EduCore\backend\EduCore.API\obj\Debug\net8.0\EduCore.API.dll
+C:\Users\hasan\Documents\EduCore\EduCore\backend\EduCore.API\obj\Debug\net8.0\refint\EduCore.API.dll
+C:\Users\hasan\Documents\EduCore\EduCore\backend\EduCore.API\obj\Debug\net8.0\EduCore.API.pdb

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0sBYLdPWrcA=",
+  "dgSpecHash": "HUe4Kwf0jgo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\hasan\\Documents\\EduCore\\backend\\EduCore.Business\\EduCore.Business.csproj",
+  "projectFilePath": "C:\\Users\\hasan\\Documents\\EduCore\\EduCore\\backend\\EduCore.Business\\EduCore.Business.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\hasan\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\hasan\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

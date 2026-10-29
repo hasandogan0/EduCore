@@ -1,12 +1,13 @@
 ﻿namespace EduCore.Business.DTOs;
 
-public sealed record AdminUserDto(
-    int Id,
-    string Username,
-    string Fullname,
-    string Email,
-    string Role,
-    bool IsActive,
-    decimal TotalEarnings,
-    string HeadShotUrl
-    );
+public sealed record AdminUserDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
+    public decimal TotalEarnings { get; set; }
+    public string HeadShotUrl { get; set; } = string.Empty;
+}
