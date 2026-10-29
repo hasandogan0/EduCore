@@ -26,7 +26,7 @@ services:
     environment:
       ConnectionStrings__DefaultConnection: Server=db;Database=${SQL_DATABASE:-EduCoreDb};User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True
       Jwt__Key: ${JWT_KEY}
-      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_ENVIRONMENT: Development
     depends_on:
       db:
         condition: service_healthy
