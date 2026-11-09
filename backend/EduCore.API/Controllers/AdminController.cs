@@ -19,7 +19,6 @@ public class AdminController : ControllerBase
     [HttpGet("pending-instructors")]
     public async Task<IActionResult> GetPendingInstructors()
     {
-        // Artık servis içeride AutoMapper kullanarak AuthResponseDto listesi dönüyor
         var instructors = await _adminService.GetPendingInstructorsAsync();
         return Ok(instructors);
     }

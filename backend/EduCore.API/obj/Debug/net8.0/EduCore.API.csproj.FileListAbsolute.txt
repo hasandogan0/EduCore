@@ -468,3 +468,4 @@ C:\Users\hasan\Documents\EduCore\EduCore\backend\EduCore.API\obj\Debug\net8.0\sw
 C:\Users\hasan\Documents\EduCore\EduCore\backend\EduCore.API\obj\Debug\net8.0\EduCore..B35F9802.Up2Date
 C:\Users\hasan\Documents\EduCore\EduCore\backend\EduCore.API\obj\Debug\net8.0\EduCore.API.genruntimeconfig.cache
 C:\Users\hasan\Documents\EduCore\EduCore\backend\EduCore.API\obj\Debug\net8.0\ref\EduCore.API.dll
+C:\Users\hasan\Documents\EduCore\EduCore\backend\EduCore.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
