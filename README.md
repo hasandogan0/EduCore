@@ -52,8 +52,9 @@ Run the API:
 dotnet run --project EduCore.API
 ```
 
-Open `frontend/index.html` directly in a browser or use a Live Server
-extension. The frontend communicates with the API through the Fetch API.
+For local frontend-only development, open `frontend/index.html` directly in a
+browser or use a Live Server extension. The frontend communicates with the API
+through the Fetch API.
 
 ### Docker Compose
 
@@ -61,6 +62,7 @@ The root `docker-compose.yml` starts:
 
 - **db**: Microsoft SQL Server 2022 on port `1433`
 - **api**: the .NET 8 API on `http://localhost:8080`
+- **frontend**: the Nginx-hosted frontend on `http://localhost:3000`
 
 Create a local `.env` file in the repository root. Do not commit this file:
 
@@ -76,11 +78,21 @@ the JWT key should be replaced with a long, unique secret.
 Start the services:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
+Open the application at `http://localhost:3000`. The frontend container
+proxies `/api` and `/uploads` requests to the API, so Live Server or the .NET
+SDK is not required on the machine running the Docker deployment.
+
 The database uses the named `mssql_data` volume, and the API waits for the
-database health check before starting. Stop the services with:
+database health check before starting. Check the service status with:
+
+```bash
+docker compose ps
+```
+
+Stop the services with:
 
 ```bash
 docker compose down
@@ -157,8 +169,9 @@ API'yi çalıştırın:
 dotnet run --project EduCore.API
 ```
 
-`frontend/index.html` dosyasını doğrudan tarayıcıda açabilir veya Live Server
-uzantısı kullanabilirsiniz. Frontend, API ile Fetch API üzerinden haberleşir.
+Yerel frontend geliştirmesi için `frontend/index.html` dosyasını doğrudan
+tarayıcıda açabilir veya Live Server uzantısı kullanabilirsiniz. Frontend,
+API ile Fetch API üzerinden haberleşir.
 
 ### Docker Compose
 
@@ -166,6 +179,7 @@ Kök dizindeki `docker-compose.yml` aşağıdaki servisleri başlatır:
 
 - **db**: `1433` portunda Microsoft SQL Server 2022
 - **api**: `http://localhost:8080` adresinde .NET 8 API
+- **frontend**: Nginx üzerinden `http://localhost:3000` adresinde frontend
 
 Proje kök dizininde yerel bir `.env` dosyası oluşturun. Bu dosyayı commit
 etmeyin:
@@ -182,11 +196,22 @@ uzun ve benzersiz bir gizli değerle değiştirilmelidir.
 Servisleri başlatın:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
+Uygulamayı `http://localhost:3000` adresinden açın. Frontend container'ı
+`/api` ve `/uploads` isteklerini API'ye yönlendirir; Docker ile dağıtım yapılan
+makinede Live Server veya .NET SDK gerekmez.
+
 Veritabanı `mssql_data` isimli volume üzerinde saklanır ve API, veritabanı
-health check başarılı olduktan sonra başlatılır. Servisleri durdurmak için:
+health check başarılı olduktan sonra başlatılır. Servis durumunu kontrol etmek
+için:
+
+```bash
+docker compose ps
+```
+
+Servisleri durdurmak için:
 
 ```bash
 docker compose down

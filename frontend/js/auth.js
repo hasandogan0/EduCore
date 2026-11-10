@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5239/api';
+const API_BASE_URL = '/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');

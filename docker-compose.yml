@@ -31,5 +31,16 @@ services:
       db:
         condition: service_healthy
 
+  frontend:
+    image: educore-frontend
+    container_name: educore_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
 volumes:
   mssql_data:
