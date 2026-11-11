@@ -1,169 +1,147 @@
-const API_BASE_URL = '/api';
-
+import { getAssetUrl, getCourses, getInstructors } from './api.js';
 document.addEventListener('DOMContentLoaded', () => {
     updateNav();
-    loadCourses();
-    loadHomeInstructors();
+    void loadCourses();
+    void loadHomeInstructors();
 });
-
-// ... updateNav and loadCourses codes remain same ...
-
-async function loadHomeInstructors() {
-    const list = document.getElementById('instructor-list');
-    if (!list) return;
-
-    try {
-        const res = await fetch(`${API_BASE_URL}/Instructors`);
-        if (!res.ok) throw new Error('Eğitmenler yüklenemedi');
-
-        const instructors = await res.json();
-        list.innerHTML = '';
-
-        if (instructors.length === 0) {
-            list.innerHTML = '<p>Henüz eğitmen bulunmuyor.</p>';
-            return;
-        }
-
-        instructors.forEach(inst => {
-            let img = inst.headshotUrl || 'https://via.placeholder.com/150?text=Eğitmen';
-            // Fix URL
-            if (img.startsWith('/')) {
-                img = API_BASE_URL.replace('/api', '') + img;
-            }
-
-            const div = document.createElement('div');
-            div.className = 'instructor-card-home';
-            div.innerHTML = `
-                <img src="${img}" alt="${inst.fullName}">
-                <h3>${inst.fullName}</h3>
-                <p style="color:#aaa; font-size:0.9rem">${inst.bio || ''}</p>
-            `;
-            list.appendChild(div);
-        });
-
-    } catch (err) {
-        console.error(err);
-        list.innerHTML = '<p>Eğitmenler yüklenemedi.</p>';
+function getRequiredElement(id) {
+    const element = document.getElementById(id);
+    if (!element) {
+        throw new Error(`Sayfa öğesi bulunamadı: ${id}`);
     }
+    return element;
 }
-
 function updateNav() {
     const user = localStorage.getItem('username');
     const navList = document.querySelector('nav ul');
-    const loginLink = navList.querySelector('.view-btn');
-
-    if (!navList || !loginLink) return;
-
-    if (user) {
-        // User is logged in
-        loginLink.textContent = `Merhaba, ${user}`;
-        loginLink.href = '#';
-        loginLink.style.background = 'transparent';
-        loginLink.style.border = '1px solid var(--glass-border)';
-
-        // Remove existing logout btn if any to avoid duplicates
-        const existingLogout = document.getElementById('logout-btn-nav');
-        if (existingLogout) existingLogout.remove();
-
-        // Add 'Kurslarım' link if Student
-        const role = localStorage.getItem('role');
-        const existingMyCourses = document.getElementById('my-courses-nav');
-        if (role === 'Student' && !existingMyCourses) {
-            const li = document.createElement('li');
-            li.id = 'my-courses-nav';
-            li.innerHTML = '<a href="my-courses.html">Kurslarım</a>';
-            // Insert before Logout or at end? Nav order: Home, Courses, [My Courses], User, Logout
-            // Easy way: just append to navList
-            navList.appendChild(li);
-        }
-
-        // Add Logout button
-        const logoutLi = document.createElement('li');
-        logoutLi.id = 'logout-btn-nav'; // Mark it to avoid duplicates
-        const logoutBtn = document.createElement('a');
-        logoutBtn.href = '#';
-        logoutBtn.textContent = 'Çıkış Yap';
-        logoutBtn.className = 'view-btn';
-        logoutBtn.style.background = 'rgba(255, 50, 50, 0.2)';
-
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.clear();
-            window.location.reload();
-        });
-
-        logoutLi.appendChild(logoutBtn);
-        navList.appendChild(logoutLi);
-    } else {
-        // User is passed "Giriş Yap" in HTML, but let's ensure functionality
+    const loginLink = navList?.querySelector('.view-btn');
+    if (!navList || !loginLink) {
+        return;
+    }
+    document.getElementById('logout-btn-nav')?.remove();
+    document.getElementById('my-courses-nav')?.remove();
+    if (!user) {
         loginLink.textContent = 'Giriş Yap';
         loginLink.href = 'login.html';
         loginLink.style.background = 'var(--primary-color)';
-
-        // Remove logout if present logic not really needed if we reload on logout, but safe to have
-        const existingLogout = document.getElementById('logout-btn-nav');
-        if (existingLogout) existingLogout.remove();
+        return;
     }
+    loginLink.textContent = `Merhaba, ${user}`;
+    loginLink.href = '#';
+    loginLink.style.background = 'transparent';
+    loginLink.style.border = '1px solid var(--glass-border)';
+    if (localStorage.getItem('role') === 'Student') {
+        const myCourses = document.createElement('li');
+        myCourses.id = 'my-courses-nav';
+        myCourses.innerHTML = '<a href="my-courses.html">Kurslarım</a>';
+        navList.appendChild(myCourses);
+    }
+    const logoutItem = document.createElement('li');
+    logoutItem.id = 'logout-btn-nav';
+    const logoutButton = document.createElement('a');
+    logoutButton.href = '#';
+    logoutButton.textContent = 'Çıkış Yap';
+    logoutButton.className = 'view-btn';
+    logoutButton.style.background = 'rgba(255, 50, 50, 0.2)';
+    logoutButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        localStorage.clear();
+        window.location.reload();
+    });
+    logoutItem.appendChild(logoutButton);
+    navList.appendChild(logoutItem);
 }
-
-async function loadCourses() {
-    const courseList = document.getElementById('course-list');
-    if (!courseList) return;
-
+async function loadHomeInstructors() {
+    const list = document.getElementById('instructor-list');
+    if (!list) {
+        return;
+    }
     try {
-        const response = await fetch(`${API_BASE_URL}/courses`);
-        if (!response.ok) {
-            throw new Error('Kurslar getirilemedi');
-        }
-
-        const courses = await response.json();
-
-        courseList.innerHTML = ''; // Clear loading
-
-        if (courses.length === 0) {
-            courseList.innerHTML = '<p>Şu an kurs bulunmuyor.</p>';
+        const instructors = await getInstructors();
+        list.innerHTML = '';
+        if (instructors.length === 0) {
+            list.textContent = 'Henüz eğitmen bulunmuyor.';
             return;
         }
-
-        courses.forEach(course => {
-            const card = document.createElement('div');
-            card.className = 'course-card';
-
-            let imgUrl = course.imageUrl;
-            if (imgUrl && imgUrl.startsWith('/')) {
-                imgUrl = API_BASE_URL.replace('/api', '') + imgUrl;
-            }
-
-            // Random gradient placeholder if no image
-            const bgStyle = imgUrl
-                ? `background-image: url('${imgUrl}')`
-                : `background: linear-gradient(135deg, #1e293b, #334155)`;
-
-            // For the <img> tag inside
-            const imgTag = imgUrl ? `<img src="${imgUrl}" alt="${course.title}" style="width:100%;height:100%;object-fit:cover;">` : '';
-
-            card.innerHTML = `
-                <div class="course-image" style="${bgStyle}">
-                    ${imgTag}
-                </div>
-                <div class="course-content">
-                    <div class="course-category">${course.categoryName}</div>
-                    <h3 class="course-title">${course.title}</h3>
-                    <div class="course-instructor">
-                        <span>${course.instructorName} Tarafından</span>
-                    </div>
-                    ${course.description ? `<p style="font-size:0.9rem;color:#94a3b8;margin-bottom:1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${course.description}</p>` : ''}
-                    <div class="course-footer">
-                        <span class="course-price">${course.price.toFixed(2)} TL</span>
-                        <a href="course-details.html?id=${course.id}" class="view-btn">Detayları Gör</a>
-                    </div>
-                </div>
-            `;
-
-            courseList.appendChild(card);
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        if (courseList) courseList.innerHTML = '<p style="color:red">Kurslar yüklenemedi. Lütfen backend servisini kontrol edin.</p>';
+        instructors.forEach((instructor) => list.appendChild(createInstructorCard(instructor)));
     }
+    catch (error) {
+        console.error(error);
+        list.textContent = 'Eğitmenler yüklenemedi.';
+    }
+}
+function createInstructorCard(instructor) {
+    const card = document.createElement('div');
+    card.className = 'instructor-card-home';
+    const image = document.createElement('img');
+    image.src = getAssetUrl(instructor.headShotUrl) || 'https://via.placeholder.com/150?text=Eğitmen';
+    image.alt = instructor.fullName;
+    card.append(image);
+    const name = document.createElement('h3');
+    name.textContent = instructor.fullName;
+    card.append(name);
+    const bio = document.createElement('p');
+    bio.style.cssText = 'color:#aaa; font-size:0.9rem';
+    bio.textContent = instructor.bio ?? '';
+    card.append(bio);
+    return card;
+}
+async function loadCourses() {
+    const courseList = document.getElementById('course-list');
+    if (!courseList) {
+        return;
+    }
+    try {
+        const courses = await getCourses();
+        courseList.innerHTML = '';
+        if (courses.length === 0) {
+            courseList.textContent = 'Şu an kurs bulunmuyor.';
+            return;
+        }
+        courses.forEach((course) => courseList.appendChild(createCourseCard(course)));
+    }
+    catch (error) {
+        console.error(error);
+        courseList.textContent = 'Kurslar yüklenemedi. Lütfen backend servisini kontrol edin.';
+    }
+}
+function createCourseCard(course) {
+    const card = document.createElement('div');
+    card.className = 'course-card';
+    const image = document.createElement('div');
+    image.className = 'course-image';
+    const imageUrl = getAssetUrl(course.imageUrl);
+    if (imageUrl) {
+        image.style.backgroundImage = `url("${imageUrl}")`;
+    }
+    else {
+        image.style.background = 'linear-gradient(135deg, #1e293b, #334155)';
+    }
+    card.append(image);
+    const content = document.createElement('div');
+    content.className = 'course-content';
+    content.innerHTML = `
+        <div class="course-category"></div>
+        <h3 class="course-title"></h3>
+        <div class="course-instructor"><span></span></div>
+        <div class="course-footer">
+            <span class="course-price"></span>
+            <a class="view-btn">Detayları Gör</a>
+        </div>
+    `;
+    content.querySelector('.course-category').textContent = course.categoryName;
+    content.querySelector('.course-title').textContent = course.title;
+    content.querySelector('.course-instructor span').textContent = `${course.instructorName} Tarafından`;
+    if (course.description) {
+        const description = document.createElement('p');
+        description.textContent = course.description;
+        description.style.cssText =
+            'font-size:0.9rem;color:#94a3b8;margin-bottom:1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;';
+        content.insertBefore(description, content.querySelector('.course-footer'));
+    }
+    content.querySelector('.course-price').textContent = `${course.price.toFixed(2)} TL`;
+    const detailsLink = content.querySelector('.view-btn');
+    detailsLink.href = `course-details.html?id=${course.id}`;
+    card.append(content);
+    return card;
 }

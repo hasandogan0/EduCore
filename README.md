@@ -16,7 +16,7 @@ EduCore is organized as a monorepo:
 - **backend/**: .NET 8 Web API with layered architecture, Entity Framework
   Core, DTOs, FluentValidation, AutoMapper, JWT authentication, and ASP.NET
   Core Identity.
-- **frontend/**: HTML5, CSS3, and vanilla JavaScript UI.
+- **frontend/**: HTML5, CSS3, and TypeScript-based vanilla UI.
 - **backend/Tests/**: Unit and integration tests.
 
 ### Tech Stack
@@ -25,7 +25,7 @@ EduCore is organized as a monorepo:
 - Microsoft SQL Server and Entity Framework Core
 - FluentValidation and AutoMapper
 - JWT authentication and ASP.NET Core Identity
-- HTML5, CSS3, and vanilla JavaScript (Fetch API)
+- HTML5, CSS3, TypeScript, and Fetch API
 - Docker and Docker Compose
 
 ### Requirements
@@ -52,9 +52,19 @@ Run the API:
 dotnet run --project EduCore.API
 ```
 
-For local frontend-only development, open `frontend/index.html` directly in a
-browser or use a Live Server extension. The frontend communicates with the API
-through the Fetch API.
+For local frontend development, install Node.js, then build the TypeScript
+sources:
+
+```bash
+cd frontend
+npm install
+npm run typecheck
+npm run build
+```
+
+After the build, serve `frontend/` with a static server such as the VS Code
+Live Server extension. The frontend communicates with the API through the
+typed Fetch API client in `frontend/src/api.ts`.
 
 ### Docker Compose
 
@@ -132,8 +142,7 @@ EduCore bir monorepo olarak düzenlenmiştir:
 
 - **backend/**: .NET 8 Web API, katmanlı mimari, Entity Framework Core, DTO,
   FluentValidation, AutoMapper, JWT ve ASP.NET Core Identity.
-- **frontend/**: HTML5, CSS3 ve vanilla JavaScript ile geliştirilmiş kullanıcı
-  arayüzü.
+- **frontend/**: HTML5, CSS3 ve TypeScript tabanlı vanilla kullanıcı arayüzü.
 - **backend/Tests/**: Birim ve entegrasyon testleri.
 
 ### Kullanılan Teknolojiler
@@ -142,7 +151,7 @@ EduCore bir monorepo olarak düzenlenmiştir:
 - Microsoft SQL Server ve Entity Framework Core
 - FluentValidation ve AutoMapper
 - JWT kimlik doğrulama ve ASP.NET Core Identity
-- HTML5, CSS3 ve vanilla JavaScript (Fetch API)
+- HTML5, CSS3, TypeScript ve Fetch API
 - Docker ve Docker Compose
 
 ### Gereksinimler
@@ -169,9 +178,19 @@ API'yi çalıştırın:
 dotnet run --project EduCore.API
 ```
 
-Yerel frontend geliştirmesi için `frontend/index.html` dosyasını doğrudan
-tarayıcıda açabilir veya Live Server uzantısı kullanabilirsiniz. Frontend,
-API ile Fetch API üzerinden haberleşir.
+Yerel frontend geliştirmesi için Node.js yükleyin ve TypeScript kaynaklarını
+derleyin:
+
+```bash
+cd frontend
+npm install
+npm run typecheck
+npm run build
+```
+
+Derleme sonrasında `frontend/` klasörünü VS Code Live Server gibi bir statik
+sunucu ile çalıştırabilirsiniz. Frontend, backend ile uyumlu tipli Fetch API
+istemcisi (`frontend/src/api.ts`) üzerinden haberleşir.
 
 ### Docker Compose
 
